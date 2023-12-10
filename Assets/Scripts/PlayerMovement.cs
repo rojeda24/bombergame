@@ -6,17 +6,23 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    //Player attributes
+    private Rigidbody2D rigidBody = null;
+    [SerializeField]
+    private float moveSpeed = 3f;
+
+    //Control attributes
     private PlayerInput input = null;
     private Vector2 currentVector = Vector2.zero;
     private Vector2 nextVector = Vector2.zero;
-    private Rigidbody2D rigidBody = null;
-    public float moveSpeed = 5f;
-
-    public Grid grid = null;
     private Vector2 currentTarget = Vector2.zero;
     private Vector2 nextTarget = Vector2.zero;
-
     private bool isMoving = false;
+
+    //Environment attributes
+    [SerializeField]
+    private Grid grid = null;
+
 
     private void Awake()
     {
@@ -44,18 +50,19 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         //If almost at target, snap to target
-         if (Vector2.Distance(rigidBody.position, currentTarget) < 0.1f)
+        if (Vector2.Distance(rigidBody.position, currentTarget) < 0.1f)
         {
             rigidBody.position = currentTarget;
         }
 
-        //If at target, but still moving, change target
+        //If at target, but still moving, change target and update current vector
         if (rigidBody.position == currentTarget && isMoving)
         {
             currentTarget = currentTarget + nextVector;
             currentVector = nextVector;
             Debug.Log("Changing target... to " + nextTarget); //TODO CHECK WHY NOT WORKING IF NOT CHANGING DIRECTION
         }
+
         //If not at target, move towards target
         if (rigidBody.position != currentTarget)
         {
@@ -73,28 +80,32 @@ public class PlayerMovement : MonoBehaviour
         isMoving = true;
 
         nextVector = context.ReadValue<Vector2>();
+        //If both directions are pressed, ignore previous direction
+        if ( Math.Abs(nextVector.x) > 0 && Math.Abs(nextVector.y) > 0)
+        {
+            if (Math.Abs(currentVector.x) > Math.Abs(currentVector.y))
+            {
+                nextVector = new Vector2(0, nextVector.y);
+            }
+            else
+            {
+                nextVector = new Vector2(nextVector.x, 0);
+            }
+        }
+
 
         //Avoid diagonal movement
-        if(Math.Abs(nextVector.x) > Math.Abs(nextVector.y))
+        if (Math.Abs(nextVector.x) > Math.Abs(nextVector.y))
         {
-            nextVector = new Vector2((float)Math.Ceiling(nextVector.x), 0);
+            nextVector = new Vector2( nextVector.x < 0 ? -1 : 1 , 0); //x= 1 or -1
         }
         else
         {
-            nextVector = new Vector2(0, (float)Math.Ceiling(nextVector.y));
+            nextVector = new Vector2(0, nextVector.y < 0 ? -1 : 1); //y= 1 or -1
         }
 
+        //Define next intented target
         nextTarget = currentTarget + nextVector;
-
-
-        if (rigidBody.position == currentTarget)
-        {
-            currentVector = nextVector;
-
-            currentTarget = nextTarget;
-            Debug.Log("Move Target: " + currentTarget);
-        }
-
     }
 
     private void OnMovementCancelled(InputAction.CallbackContext context)
