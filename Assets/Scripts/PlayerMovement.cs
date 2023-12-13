@@ -67,13 +67,6 @@ public class PlayerMovement : MonoBehaviour
             currentDirection = nextDirection;
         }
 
-        //For continuous movement, update step target
-        if (rigidBody.position == stepTarget && isMoving)
-        {
-            stepTarget = stepTarget + nextDirection;
-            currentDirection = nextDirection;
-        } 
-
         if (rigidBody.position == stepTarget)
         {
             rigidBody.velocity = Vector2.zero;
