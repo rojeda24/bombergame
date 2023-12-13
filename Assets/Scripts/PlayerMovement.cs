@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private Grid grid = null;
     [SerializeField]
-    private Tilemap tilemap = null;
+    private Tilemap wallsTilemap = null;
 
 
     private void Awake()
@@ -67,9 +67,17 @@ public class PlayerMovement : MonoBehaviour
             currentDirection = nextDirection;
         }
 
+        Vector3 stepTargetV3 = new Vector3(stepTarget.x, stepTarget.y, 0);
+        Vector3Int stepTargetCell = wallsTilemap.WorldToCell(stepTargetV3);
+
         if (rigidBody.position == stepTarget)
         {
             rigidBody.velocity = Vector2.zero;
+        } 
+        else if (wallsTilemap.HasTile(stepTargetCell))
+        {
+            rigidBody.velocity = Vector2.zero;
+            stepTarget = rigidBody.position;
         }
         //Move to step target
         else
