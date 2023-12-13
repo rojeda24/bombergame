@@ -1420,6 +1420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   grid: {fileID: 78366596}
+  tilemap: {fileID: 378751504}
 --- !u!50 &1972625119
 Rigidbody2D:
   serializedVersion: 4
