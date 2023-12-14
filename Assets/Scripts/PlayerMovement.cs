@@ -21,8 +21,6 @@ public class PlayerMovement : MonoBehaviour
 
     //Environment attributes
     [SerializeField]
-    private Grid grid = null;
-    [SerializeField]
     private Tilemap wallsTilemap = null;
 
 
@@ -31,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
         input = new PlayerInput();
         rigidBody = GetComponent<Rigidbody2D>();
          
-        rigidBody.position = grid.GetCellCenterWorld(Vector3Int.zero);//TODO: change to spawn point
+        rigidBody.position = new Vector2(0.5f,5.5f);//TODO: change to spawn point
         stepTarget = rigidBody.position;
     }
 
@@ -67,14 +65,25 @@ public class PlayerMovement : MonoBehaviour
             currentDirection = nextDirection;
         }
 
-        Vector3 stepTargetV3 = new Vector3(stepTarget.x, stepTarget.y, 0);
-        Vector3Int stepTargetCell = wallsTilemap.WorldToCell(stepTargetV3);
+        //Get left and right shoulder targets.
+        //By shoulder we mean the left and right side of player.
+        //Getting both shoulders is necessary to check for collisions when player is between two tiles.
+        float leftShoulderX = stepTarget.x + currentDirection.x / 2 - currentDirection.y / 4;
+        float leftShoulderY = stepTarget.y + currentDirection.y / 2 - currentDirection.x / 4;
+        float rightShoulderX = stepTarget.x + currentDirection.x / 2 + currentDirection.y / 4;
+        float rightShoulderY = stepTarget.y + currentDirection.y / 2 + currentDirection.x / 4;
+        Vector3 leftShoulderTargetV3 = new Vector2(leftShoulderX, leftShoulderY);
+        Vector3 rightShoulderTargetV3 = new Vector2(rightShoulderX, rightShoulderY);
+
+        //Get cells of left and right shoulder targets
+        Vector3Int cellCollisioningLeftShoulder = wallsTilemap.WorldToCell(leftShoulderTargetV3);
+        Vector3Int cellCollisioningRightShoulder = wallsTilemap.WorldToCell(rightShoulderTargetV3);
 
         if (rigidBody.position == stepTarget)
         {
             rigidBody.velocity = Vector2.zero;
         } 
-        else if (wallsTilemap.HasTile(stepTargetCell))
+        else if (wallsTilemap.HasTile(cellCollisioningLeftShoulder) || wallsTilemap.HasTile(cellCollisioningRightShoulder))
         {
             rigidBody.velocity = Vector2.zero;
             stepTarget = rigidBody.position;
@@ -108,18 +117,15 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-
         //Avoid diagonal movement
         if (Math.Abs(nextDirection.x) > Math.Abs(nextDirection.y))
         {
-            nextDirection = new Vector2(nextDirection.x < 0 ? -1 : 1 , 0); //x= 1 or -1
+            nextDirection = new Vector2(nextDirection.x < 0 ? -0.5f : 0.5f, 0); //x= -0.5 or 0.5
         }
         else
         {
-            nextDirection = new Vector2(0, nextDirection.y < 0 ? -1 : 1); //y= 1 or -1
+            nextDirection = new Vector2(0, nextDirection.y < 0 ? -0.5f : 0.5f); //y= -0.5 or 0.5
         }
-
-
     }
 
     private void OnMovementCancelled(InputAction.CallbackContext context)
