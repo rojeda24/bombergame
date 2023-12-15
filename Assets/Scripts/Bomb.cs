@@ -27,22 +27,28 @@ public class Bomb : MonoBehaviour
     void Start()
     {
         wallsTilemap = GameObject.Find("WallsTilemap").GetComponent<Tilemap>();
-        StartCoroutine(Explode());
+        StartCoroutine(LightingFuse());
     }
 
-    private IEnumerator Explode()
+    private IEnumerator LightingFuse()
     {
         yield return new WaitForSeconds(3f);
+        Explode();
+    }
+
+    public void Explode()
+    {
         //Instantiate explosion just before object is destroyed
         Instantiate(explosionCenterPrefab, transform.position, Quaternion.identity);
+
         bool isLeftBlocked = false;
         bool isRightBlocked = false;
         bool isUpBlocked = false;
         bool isDownBlocked = false;
 
-        Vector3 newPosition;
+        Vector3 newPosition;//This will change for each direction we check
 
-        Vector3Int cellToCheck;
+        Vector3Int cellToCheck;//This will change for each direction and newPosition value
 
         int powerCounter = 1;
         while ( powerCounter < powerLevel )
@@ -126,9 +132,12 @@ public class Bomb : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        //check if collision with explosion
+        if (collision.CompareTag("Explosion"))
+        {
+            Explode();
+        }
     }
 }
