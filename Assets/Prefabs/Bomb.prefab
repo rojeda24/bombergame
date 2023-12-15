@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689764d95688ace48a7b049f234af2ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  powerLevel: 2
+  powerLevel: 5
   explosionCenterPrefab: {fileID: 9105673588114414558, guid: b568afb9c6ad5ee4b8229999a41125e5, type: 3}
   explosionLeftMiddlePrefab: {fileID: 498433763984879371, guid: c8950efc769a7b14f875bf70a3c4d09b, type: 3}
   explosionRightMiddlePrefab: {fileID: 498433763984879371, guid: cae072f8d6561ad488ca672dc5667cef, type: 3}
@@ -108,6 +108,7 @@ MonoBehaviour:
   explosionRightCornerPrefab: {fileID: 498433763984879371, guid: 42fb94b0359a1b841bb76e7faadf9109, type: 3}
   explosionUpCornerPrefab: {fileID: 498433763984879371, guid: 5f0d2adaa1f6084438481727c04e6feb, type: 3}
   explosionDownCornerPrefab: {fileID: 498433763984879371, guid: 1c66108252645104abb531932a1f5e89, type: 3}
+  wallsTilemap: {fileID: 0}
 --- !u!61 &6832453339445507245
 BoxCollider2D:
   m_ObjectHideFlags: 0
