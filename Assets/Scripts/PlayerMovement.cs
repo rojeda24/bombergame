@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
@@ -22,14 +23,19 @@ public class PlayerMovement : MonoBehaviour
     //Environment attributes
     [SerializeField]
     private Tilemap wallsTilemap = null;
+    [SerializeField]
+    private GameObject bombPrefab;
 
 
     private void Awake()
      {
         input = new PlayerInput();
         rigidBody = GetComponent<Rigidbody2D>();
-         
-        rigidBody.position = new Vector2(0.5f,5.5f);//TODO: change to spawn point
+
+        //Center position to cell
+        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
+        Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
+        rigidBody.position = cellCenterPosition;//TODO: change to spawn point
         stepTarget = rigidBody.position;
     }
 
@@ -38,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
         input.Enable();
         input.Player.Movement.performed += OnMovementPerformed;
         input.Player.Movement.canceled += OnMovementCancelled;
+        input.Player.Bomb.performed += OnBombPerformed;
     }
 
     private void OnDisable()
@@ -47,17 +54,28 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Movement.canceled -= OnMovementCancelled;
     }
 
+    private void Update()
+    {
+        
+    }
+
     /// <summary>
     /// Player's Rigidbody2D properties are updated here.
     /// </summary>
     private void FixedUpdate()
     {
+        /*
+         * SNAPING FINAL MOVEMENT TO STEP TARGET
+         */
         //If almost at step target, snap to step target
         if (Vector2.Distance(rigidBody.position, stepTarget) < 0.1f)
         {
             rigidBody.position = stepTarget;
         }
 
+        /*
+         * CONTINUOUS MOVEMENT
+         */
         //If at step target, but still moving, update step target
         if (rigidBody.position == stepTarget && isMoving)
         {
@@ -65,6 +83,9 @@ public class PlayerMovement : MonoBehaviour
             currentDirection = nextDirection;
         }
 
+        /*
+         * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
+         */
         //Get left and right shoulder targets.
         //By shoulder we mean the left and right side of player.
         //Getting both shoulders is necessary to check for collisions when player is between two tiles.
@@ -79,11 +100,46 @@ public class PlayerMovement : MonoBehaviour
         Vector3Int cellCollisioningLeftShoulder = wallsTilemap.WorldToCell(leftShoulderTargetV3);
         Vector3Int cellCollisioningRightShoulder = wallsTilemap.WorldToCell(rightShoulderTargetV3);
 
+        /*
+         * CHECKING FOR BOMBS
+         */
+        //Check if target is colliding with bomb to stop movement
+        Vector2 farTarget = stepTarget + currentDirection/2;
+
+        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
+        Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
+
+        Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
+        bool isApproachingBomb = false;
+        foreach (Collider2D hitCollider in hitColliders)
+        {
+            if (hitCollider.gameObject.name == bombPrefab.name + "(Clone)")
+            {
+                //avoid bombs in the same cell as player
+                if (wallsTilemap.WorldToCell(rigidBody.position) == wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position))
+                {
+                    continue;
+                }
+                isApproachingBomb = true;
+                break;
+            }
+        }
+
+        /*
+         * TAKING MOVEMENT DECISIONS
+         */
         if (rigidBody.position == stepTarget)
         {
             rigidBody.velocity = Vector2.zero;
         } 
-        else if (wallsTilemap.HasTile(cellCollisioningLeftShoulder) || wallsTilemap.HasTile(cellCollisioningRightShoulder))
+        else if (
+            wallsTilemap.HasTile(cellCollisioningLeftShoulder) 
+            || wallsTilemap.HasTile(cellCollisioningRightShoulder) )
+        {
+            rigidBody.velocity = Vector2.zero;
+            stepTarget = rigidBody.position;
+        }
+        else if (isApproachingBomb)
         {
             rigidBody.velocity = Vector2.zero;
             stepTarget = rigidBody.position;
@@ -131,5 +187,13 @@ public class PlayerMovement : MonoBehaviour
     private void OnMovementCancelled(InputAction.CallbackContext context)
     {
         isMoving = false;
+    }
+
+    private void OnBombPerformed(InputAction.CallbackContext context)
+    {
+        //Center position to cell
+        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
+        Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
+        Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
     }
 }
