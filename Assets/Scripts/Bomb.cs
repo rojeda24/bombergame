@@ -35,92 +35,93 @@ public class Bomb : MonoBehaviour
         yield return new WaitForSeconds(3f);
         //Instantiate explosion just before object is destroyed
         Instantiate(explosionCenterPrefab, transform.position, Quaternion.identity);
-        int powerCounter = 1;
         bool isLeftBlocked = false;
         bool isRightBlocked = false;
         bool isUpBlocked = false;
         bool isDownBlocked = false;
 
-        Vector3 leftNewPosition;
-        Vector3 rightNewPosition;
-        Vector3 upNewPosition;
-        Vector3 downNewPosition;
+        Vector3 newPosition;
 
         Vector3Int cellToCheck;
 
+        int powerCounter = 1;
         while ( powerCounter < powerLevel )
         {
             //Instantiate explosion in all directions
             //Left
-            leftNewPosition = transform.position + new Vector3(-powerCounter, 0, 0);
-            cellToCheck = wallsTilemap.WorldToCell(leftNewPosition);
+            newPosition = transform.position + new Vector3(-powerCounter, 0, 0);
+            cellToCheck = wallsTilemap.WorldToCell(newPosition);
             if (isLeftBlocked || wallsTilemap.HasTile(cellToCheck))
             {
                 isLeftBlocked = true;
             } 
             else
             {
-                Instantiate(explosionLeftMiddlePrefab, leftNewPosition, Quaternion.identity);
+                Instantiate(explosionLeftMiddlePrefab, newPosition, Quaternion.identity);
             }
 
             //Right
-            rightNewPosition = transform.position + new Vector3(powerCounter, 0, 0);
-            cellToCheck = wallsTilemap.WorldToCell(rightNewPosition);
+            newPosition = transform.position + new Vector3(powerCounter, 0, 0);
+            cellToCheck = wallsTilemap.WorldToCell(newPosition);
             if (isRightBlocked || wallsTilemap.HasTile(cellToCheck))
             {
                 isRightBlocked = true;
             }
             else
             {
-                Instantiate(explosionLeftMiddlePrefab, rightNewPosition, Quaternion.identity);
+                Instantiate(explosionLeftMiddlePrefab, newPosition, Quaternion.identity);
             }
 
             //Up
-            upNewPosition = transform.position + new Vector3(0, powerCounter, 0);
-            cellToCheck = wallsTilemap.WorldToCell(upNewPosition);
+            newPosition = transform.position + new Vector3(0, powerCounter, 0);
+            cellToCheck = wallsTilemap.WorldToCell(newPosition);
             if (isUpBlocked || wallsTilemap.HasTile(cellToCheck))
             {
                 isUpBlocked = true;
             }
             else
             {
-                Instantiate(explosionUpMiddlePrefab, upNewPosition, Quaternion.identity);
+                Instantiate(explosionUpMiddlePrefab, newPosition, Quaternion.identity);
             }
 
             //Down
-            downNewPosition = transform.position + new Vector3(0, -powerCounter, 0);
-            cellToCheck = wallsTilemap.WorldToCell(downNewPosition);
+            newPosition = transform.position + new Vector3(0, -powerCounter, 0);
+            cellToCheck = wallsTilemap.WorldToCell(newPosition);
             if (isDownBlocked || wallsTilemap.HasTile(cellToCheck))
             {
                 isDownBlocked = true;
             }
             else
             {
-                Instantiate(explosionDownMiddlePrefab, downNewPosition, Quaternion.identity);
+                Instantiate(explosionDownMiddlePrefab, newPosition, Quaternion.identity);
             }
 
             powerCounter++;
         }
 
-        leftNewPosition = transform.position + new Vector3(-powerCounter, 0, 0);
-        cellToCheck = wallsTilemap.WorldToCell(leftNewPosition);
+        //Left
+        newPosition = transform.position + new Vector3(-powerCounter, 0, 0);
+        cellToCheck = wallsTilemap.WorldToCell(newPosition);
         if (!isLeftBlocked && !wallsTilemap.HasTile(cellToCheck))
-            Instantiate(explosionLeftCornerPrefab, leftNewPosition, Quaternion.identity);
+            Instantiate(explosionLeftCornerPrefab, newPosition, Quaternion.identity);
 
-        rightNewPosition = transform.position + new Vector3(powerCounter, 0, 0);
-        cellToCheck = wallsTilemap.WorldToCell(rightNewPosition);
+        //Right
+        newPosition = transform.position + new Vector3(powerCounter, 0, 0);
+        cellToCheck = wallsTilemap.WorldToCell(newPosition);
         if (!isRightBlocked && !wallsTilemap.HasTile(cellToCheck))
-            Instantiate(explosionRightCornerPrefab, rightNewPosition, Quaternion.identity);
+            Instantiate(explosionRightCornerPrefab, newPosition, Quaternion.identity);
 
-        upNewPosition = transform.position + new Vector3(0, powerCounter, 0);
-        cellToCheck = wallsTilemap.WorldToCell(upNewPosition);
+        //Up
+        newPosition = transform.position + new Vector3(0, powerCounter, 0);
+        cellToCheck = wallsTilemap.WorldToCell(newPosition);
         if (!isUpBlocked && !wallsTilemap.HasTile(cellToCheck))
-            Instantiate(explosionUpCornerPrefab, upNewPosition, Quaternion.identity);
+            Instantiate(explosionUpCornerPrefab, newPosition, Quaternion.identity);
 
-        downNewPosition = transform.position + new Vector3(0, -powerCounter, 0);
-        cellToCheck = wallsTilemap.WorldToCell(downNewPosition);
+        //Down
+        newPosition = transform.position + new Vector3(0, -powerCounter, 0);
+        cellToCheck = wallsTilemap.WorldToCell(newPosition);
         if (!isDownBlocked && !wallsTilemap.HasTile(cellToCheck))
-            Instantiate(explosionDownCornerPrefab, downNewPosition, Quaternion.identity);
+            Instantiate(explosionDownCornerPrefab, newPosition, Quaternion.identity);
 
         Destroy(gameObject);
     }
