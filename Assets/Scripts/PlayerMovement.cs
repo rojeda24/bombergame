@@ -106,16 +106,13 @@ public class PlayerMovement : MonoBehaviour
         //Check if target is colliding with bomb to stop movement
         Vector2 farTarget = stepTarget + currentDirection/2;
 
-        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
-        Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
-
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
         bool isApproachingBomb = false;
         foreach (Collider2D hitCollider in hitColliders)
         {
             if (hitCollider.gameObject.name == bombPrefab.name + "(Clone)")
             {
-                //avoid bombs in the same cell as player
+                //avoid stoping by bombs in the same cell as player
                 if (wallsTilemap.WorldToCell(rigidBody.position) == wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position))
                 {
                     continue;
@@ -134,12 +131,8 @@ public class PlayerMovement : MonoBehaviour
         } 
         else if (
             wallsTilemap.HasTile(cellCollisioningLeftShoulder) 
-            || wallsTilemap.HasTile(cellCollisioningRightShoulder) )
-        {
-            rigidBody.velocity = Vector2.zero;
-            stepTarget = rigidBody.position;
-        }
-        else if (isApproachingBomb)
+            || wallsTilemap.HasTile(cellCollisioningRightShoulder)
+            || isApproachingBomb)
         {
             rigidBody.velocity = Vector2.zero;
             stepTarget = rigidBody.position;
@@ -192,7 +185,7 @@ public class PlayerMovement : MonoBehaviour
     private void OnBombPerformed(InputAction.CallbackContext context)
     {
         //Center position to cell
-        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
+        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position + currentDirection/10); //Take into account player's direction
         Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
         Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
     }
