@@ -107,7 +107,7 @@ public class Bomb : MonoBehaviour
         {
             if (collider.CompareTag("Block"))
             {
-                Destroy(collider.gameObject);
+                Destroy(collider.gameObject, 1f);
                 return false;
             }
         }
