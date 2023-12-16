@@ -81,17 +81,38 @@ public class Bomb : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Checks position away of bomb and instantiate explosion if there is no wall or block.
+    /// </summary>
+    /// <param name="prefabExplosion"></param>
+    /// <param name="positionAwayOfBomb"></param>
+    /// <returns>true if explosion should continue</returns>
     private bool TryToExplodeByDistance(GameObject prefabExplosion, Vector3 positionAwayOfBomb)
     {
-        Vector3Int cellToCheck;
         Vector3 newPosition = transform.position + positionAwayOfBomb;
-        cellToCheck = wallsTilemap.WorldToCell(newPosition);
-        if (!wallsTilemap.HasTile(cellToCheck))
+
+        //Check if there is a wall
+        Vector3Int cellToCheck = wallsTilemap.WorldToCell(newPosition);
+        if (wallsTilemap.HasTile(cellToCheck))
         {
-            Instantiate(prefabExplosion, newPosition, Quaternion.identity);
-            return true;
+            return false;
         }
-        return false;
+
+        //Instantiate explosion
+        Instantiate(prefabExplosion, newPosition, Quaternion.identity);
+
+        //Check if there is a block
+        Collider2D[] colliders = Physics2D.OverlapPointAll(newPosition);
+        foreach(Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Block"))
+            {
+                Destroy(collider.gameObject);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

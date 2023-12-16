@@ -103,23 +103,23 @@ public class PlayerMovement : MonoBehaviour
         /*
          * CHECKING FOR BOMBS
          */
-        //Check if target is colliding with bomb to stop movement
+        //Check if target is colliding with bomb or block to stop movement
         Vector2 farTarget = stepTarget + currentDirection/2;
 
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
-        bool isApproachingBomb = false;
+        bool mustStop = false;
         foreach (Collider2D hitCollider in hitColliders)
         {
-            if (hitCollider.gameObject.name == bombPrefab.name + "(Clone)")
+            if (hitCollider.gameObject.name == bombPrefab.name + "(Clone)" || hitCollider.CompareTag("Block"))
             {
                 //avoid stoping by bombs in the same cell as player
                 if (wallsTilemap.WorldToCell(rigidBody.position) == wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position))
                 {
                     continue;
                 }
-                isApproachingBomb = true;
+                mustStop = true;
                 break;
-            }
+            } 
         }
 
         /*
@@ -132,7 +132,7 @@ public class PlayerMovement : MonoBehaviour
         else if (
             wallsTilemap.HasTile(cellCollisioningLeftShoulder) 
             || wallsTilemap.HasTile(cellCollisioningRightShoulder)
-            || isApproachingBomb)
+            || mustStop)
         {
             rigidBody.velocity = Vector2.zero;
             stepTarget = rigidBody.position;
