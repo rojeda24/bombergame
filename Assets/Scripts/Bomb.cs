@@ -5,21 +5,23 @@ using UnityEngine.Tilemaps;
 
 public class Bomb : MonoBehaviour
 {
-
     [SerializeField]
     private int powerLevel = 1;
 
-    [SerializeField] private GameObject explosionCenterPrefab;
+    [SerializeField] private GameObject explosionPrefab;
 
-    [SerializeField] private GameObject explosionLeftMiddlePrefab;
-    [SerializeField] private GameObject explosionRightMiddlePrefab;
-    [SerializeField] private GameObject explosionUpMiddlePrefab;
-    [SerializeField] private GameObject explosionDownMiddlePrefab;
+    //Explosion sprites
+    [SerializeField] private Sprite explosionCenterSprite;
 
-    [SerializeField] private GameObject explosionLeftCornerPrefab;
-    [SerializeField] private GameObject explosionRightCornerPrefab;
-    [SerializeField] private GameObject explosionUpCornerPrefab;
-    [SerializeField] private GameObject explosionDownCornerPrefab;
+    [SerializeField] private Sprite explosionMiddleLeftSprite;
+    [SerializeField] private Sprite explosionMiddleRightSprite;
+    [SerializeField] private Sprite explosionMiddleUpSprite;
+    [SerializeField] private Sprite explosionMiddleDownSprite;
+
+    [SerializeField] private Sprite explosionCornerLeftSprite;
+    [SerializeField] private Sprite explosionCornerRightSprite;
+    [SerializeField] private Sprite explosionCornerUpSprite;
+    [SerializeField] private Sprite explosionCornerDownSprite;
 
     [SerializeField] private Tilemap wallsTilemap = null;
 
@@ -45,38 +47,39 @@ public class Bomb : MonoBehaviour
         bool isDownBlocked = false;
 
         //Instantiate explosion in the center
-        Instantiate(explosionCenterPrefab, transform.position, Quaternion.identity);
+        explosionPrefab.GetComponent<SpriteRenderer>().sprite = explosionCenterSprite;
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
         int powerCounter = 1;
         while (powerCounter < powerLevel)
         {
             //Instantiate middle explosions in all directions
             if (!isLeftBlocked)
-                isLeftBlocked = !TryToExplodeByDistance(explosionLeftMiddlePrefab, new Vector2(-powerCounter, 0));
+                isLeftBlocked = !TryToExplodeByDistance(explosionMiddleLeftSprite, -powerCounter, 0);
 
             if (!isRightBlocked)
-                isRightBlocked = !TryToExplodeByDistance(explosionRightMiddlePrefab, new Vector2(powerCounter, 0));
+                isRightBlocked = !TryToExplodeByDistance(explosionMiddleRightSprite, powerCounter, 0);
 
             if (!isUpBlocked)
-                isUpBlocked = !TryToExplodeByDistance(explosionUpMiddlePrefab, new Vector2(0, powerCounter));
+                isUpBlocked = !TryToExplodeByDistance(explosionMiddleUpSprite, 0, powerCounter);
 
             if (!isDownBlocked)
-                isDownBlocked = !TryToExplodeByDistance(explosionDownMiddlePrefab, new Vector2(0, -powerCounter));
+                isDownBlocked = !TryToExplodeByDistance(explosionMiddleDownSprite, 0, -powerCounter);
 
             powerCounter++;
         }
         //Instantiate corners
         if (!isLeftBlocked)
-            TryToExplodeByDistance(explosionLeftCornerPrefab, new Vector2(-powerCounter, 0));
+            TryToExplodeByDistance(explosionCornerLeftSprite, -powerCounter, 0);
 
         if (!isRightBlocked)
-            TryToExplodeByDistance(explosionRightCornerPrefab, new Vector2(powerCounter, 0));
+            TryToExplodeByDistance(explosionCornerRightSprite, powerCounter, 0);
 
         if (!isUpBlocked)
-            TryToExplodeByDistance(explosionUpCornerPrefab, new Vector2(0, powerCounter));
+            TryToExplodeByDistance(explosionCornerUpSprite, 0, powerCounter);
 
         if (!isDownBlocked)
-            TryToExplodeByDistance(explosionDownCornerPrefab, new Vector2(0, -powerCounter));
+            TryToExplodeByDistance(explosionCornerDownSprite, 0, -powerCounter);
 
         Destroy(gameObject);
     }
@@ -84,14 +87,14 @@ public class Bomb : MonoBehaviour
     /// <summary>
     /// Checks position away of bomb and instantiate explosion if there is no wall or block.
     /// </summary>
-    /// <param name="prefabExplosion"></param>
-    /// <param name="positionAwayOfBomb"></param>
+    /// <param name="sprite"></param>
+    /// <param name="xAway"></param>
+    /// <param name="yAway"></param>
     /// <returns>true if explosion should continue</returns>
-    private bool TryToExplodeByDistance(GameObject prefabExplosion, Vector3 positionAwayOfBomb)
+    private bool TryToExplodeByDistance(Sprite sprite, int xAway, int yAway)
     {
-        Vector3 newPosition = transform.position + positionAwayOfBomb;
-
         //Check if there is a wall
+        Vector3 newPosition = transform.position + new Vector3(xAway, yAway,0);
         Vector3Int cellToCheck = wallsTilemap.WorldToCell(newPosition);
         if (wallsTilemap.HasTile(cellToCheck))
         {
@@ -99,7 +102,8 @@ public class Bomb : MonoBehaviour
         }
 
         //Instantiate explosion
-        Instantiate(prefabExplosion, newPosition, Quaternion.identity);
+        explosionPrefab.GetComponent<SpriteRenderer>().sprite = sprite;
+        Instantiate(explosionPrefab, newPosition, Quaternion.identity);
 
         //Check if there is a block
         Collider2D[] colliders = Physics2D.OverlapPointAll(newPosition);
