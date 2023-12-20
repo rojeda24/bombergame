@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
     //Player attributes
     private Rigidbody2D rigidBody = null;
