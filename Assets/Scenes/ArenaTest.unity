@@ -2218,8 +2218,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
+  maxBombs: 1
   wallsTilemap: {fileID: 378751504}
-  bombPrefab: {fileID: 3054192168742555297, guid: c1841a25e3286b944b17fd745b673e0f, type: 3}
+  bombPrefab: {fileID: -8690302203897050199, guid: c1841a25e3286b944b17fd745b673e0f, type: 3}
 --- !u!50 &1972625119
 Rigidbody2D:
   serializedVersion: 4

@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Bomb : MonoBehaviour
+public class Bomb : MonoBehaviour, IObservable<Bomb>
 {
 
     [SerializeField]
@@ -121,6 +122,38 @@ public class Bomb : MonoBehaviour
         if (collision.CompareTag("Explosion"))
         {
             Explode();
+        }
+    }
+
+    //IObservable implementation
+    private IObserver<Bomb> observer;
+
+    private void OnDestroy()
+    {
+        observer?.OnNext(this);
+        observer?.OnCompleted();
+    }
+
+    //IObservable implementation
+    public IDisposable Subscribe(IObserver<Bomb> observer)
+    {
+        this.observer = observer;
+        return new Unsubscriber<Bomb>(observer);
+    }
+
+    //IObservable implementation
+    private class Unsubscriber<Bomb> : IDisposable
+    {
+        private IObserver<Bomb> _observer;
+
+        public Unsubscriber(IObserver<Bomb> observer)
+        {
+            this._observer = observer;
+        }
+
+        public void Dispose()
+        {
+            _observer = null;
         }
     }
 }
