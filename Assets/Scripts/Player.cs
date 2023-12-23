@@ -113,7 +113,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         bool mustStop = false;
         foreach (Collider2D hitCollider in hitColliders)
         {
-            if (hitCollider.gameObject.name == bombPrefab.name + "(Clone)" || hitCollider.CompareTag("Block"))
+            if (hitCollider.CompareTag("Bomb") || hitCollider.CompareTag("Block"))
             {
                 //avoid stoping by bombs in the same cell as player
                 if (wallsTilemap.WorldToCell(rigidBody.position) == wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position))
@@ -196,6 +196,16 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         //Center position to cell
         Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position + currentDirection/10); //Take into account player's direction
         Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
+        //Check if there is a bomb already in cellCenterPosition
+        Collider2D[] hitColliders = Physics2D.OverlapPointAll(cellCenterPosition);
+        foreach (Collider2D hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Bomb"))
+            {
+                return;
+            }
+        }
+
         Bomb bomb = Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
         bomb.powerLevel = powerLevel;
         this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
