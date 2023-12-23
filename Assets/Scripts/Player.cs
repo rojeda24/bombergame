@@ -13,8 +13,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     [SerializeField]
     private float moveSpeed = 3f;
     private int bombsDroppedCount = 0;
-    [SerializeField]
-    private int maxBombs = 1;
+    public int maxBombs = 1;
 
     //Control attributes
     private PlayerInput input = null;
@@ -230,7 +229,8 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         //check if collision with power up
         if (collision.CompareTag("PowerUp"))
         {
-            maxBombs++;
+            IPowerUp powerUp = collision.gameObject.GetComponent<IPowerUp>();
+            powerUp.ApplyPowerUp(this);
             Destroy(collision.gameObject);
         }
     }

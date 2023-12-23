@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExtraBombPowerUp : MonoBehaviour
+public class ExtraBombPowerUp : MonoBehaviour, IPowerUp
 {
-    // Start is called before the first frame update
-    void Start()
+    public void ApplyPowerUp(Player player)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        player.maxBombs++;
     }
 }
