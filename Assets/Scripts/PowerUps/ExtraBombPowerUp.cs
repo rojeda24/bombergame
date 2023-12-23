@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExtraBombPowerUp : MonoBehaviour, IPowerUp
+public class ExtraBombPowerUp : PowerUp
 {
-    public void ApplyPowerUp(Player player)
+    public override void ApplyPowerUp(Player player)
     {
         player.maxBombs++;
     }

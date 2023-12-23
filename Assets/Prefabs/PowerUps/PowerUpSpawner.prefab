@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd87a52e525399458526010d29eb102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bombPowerUpPrefab: {fileID: 696246672370478326, guid: 52dd360b719a90f46a61e8e5e82318d8, type: 3}
+  bombPowerUpPrefab: {fileID: 6877388646409777817, guid: 47a36f6dec8d541438be230af930f3b0, type: 3}

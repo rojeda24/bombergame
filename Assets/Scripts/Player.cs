@@ -14,6 +14,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     private float moveSpeed = 3f;
     private int bombsDroppedCount = 0;
     public int maxBombs = 1;
+    public int powerLevel = 1;
 
     //Control attributes
     private PlayerInput input = null;
@@ -196,6 +197,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position + currentDirection/10); //Take into account player's direction
         Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
         Bomb bomb = Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
+        bomb.powerLevel = powerLevel;
         this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
         bombsDroppedCount++;
         Debug.Log("Bomb added. Remaining bombs: " + bombsDroppedCount);

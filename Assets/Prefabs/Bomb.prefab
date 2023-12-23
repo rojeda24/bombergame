@@ -98,9 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689764d95688ace48a7b049f234af2ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  powerLevel: 5
+  powerLevel: 1
   explosionPrefab: {fileID: 8541251568397484785, guid: 811d86c06d948f6408c6f54a96eece8b, type: 3}
-  explosionCenterPrefab: {fileID: 9105673588114414558, guid: b568afb9c6ad5ee4b8229999a41125e5, type: 3}
   explosionCenterSprite: {fileID: 391749518, guid: 4f2717d1ecf785c449a91435b3d6c3dd, type: 3}
   explosionMiddleLeftSprite: {fileID: -1036543107, guid: 4f2717d1ecf785c449a91435b3d6c3dd, type: 3}
   explosionMiddleRightSprite: {fileID: -2038611822, guid: 4f2717d1ecf785c449a91435b3d6c3dd, type: 3}
@@ -110,14 +109,6 @@ MonoBehaviour:
   explosionCornerRightSprite: {fileID: 1431794273, guid: 4f2717d1ecf785c449a91435b3d6c3dd, type: 3}
   explosionCornerUpSprite: {fileID: 1087601483, guid: 4f2717d1ecf785c449a91435b3d6c3dd, type: 3}
   explosionCornerDownSprite: {fileID: 501198098, guid: 4f2717d1ecf785c449a91435b3d6c3dd, type: 3}
-  explosionLeftMiddlePrefab: {fileID: 498433763984879371, guid: c8950efc769a7b14f875bf70a3c4d09b, type: 3}
-  explosionRightMiddlePrefab: {fileID: 498433763984879371, guid: cae072f8d6561ad488ca672dc5667cef, type: 3}
-  explosionUpMiddlePrefab: {fileID: 498433763984879371, guid: 0335ce92ee7b82b46a005d23c204fb3b, type: 3}
-  explosionDownMiddlePrefab: {fileID: 498433763984879371, guid: ae558b2f9059eeb48ae00d05fc954071, type: 3}
-  explosionLeftCornerPrefab: {fileID: 7992770915632184927, guid: 6ef910ab70d073d4fa77bd9a6338af4b, type: 3}
-  explosionRightCornerPrefab: {fileID: 498433763984879371, guid: 42fb94b0359a1b841bb76e7faadf9109, type: 3}
-  explosionUpCornerPrefab: {fileID: 498433763984879371, guid: 5f0d2adaa1f6084438481727c04e6feb, type: 3}
-  explosionDownCornerPrefab: {fileID: 498433763984879371, guid: 1c66108252645104abb531932a1f5e89, type: 3}
   wallsTilemap: {fileID: 0}
 --- !u!58 &2885791890827982845
 CircleCollider2D:
