@@ -6,12 +6,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour, IObserver<Bomb>
 {
     //Player attributes
     private Rigidbody2D rigidBody = null;
     [SerializeField]
     private float moveSpeed = 3f;
+    private int bombsDroppedCount = 0;
+    [SerializeField]
+    private int maxBombs = 1;
 
     //Control attributes
     private PlayerInput input = null;
@@ -24,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private Tilemap wallsTilemap = null;
     [SerializeField]
-    private GameObject bombPrefab;
+    private Bomb bombPrefab;
 
 
     private void Awake()
@@ -184,9 +187,51 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnBombPerformed(InputAction.CallbackContext context)
     {
+        //Check if player can drop more bombs
+        if (bombsDroppedCount >= maxBombs)
+        {
+            return;
+        }
+
         //Center position to cell
         Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position + currentDirection/10); //Take into account player's direction
         Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
-        Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
+        Bomb bomb = Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
+        this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
+        bombsDroppedCount++;
+        Debug.Log("Bomb added. Remaining bombs: " + bombsDroppedCount);
+    }
+
+    //IObserver implementation
+    private IDisposable bombUnsubscriber;
+
+    //IObserver implementation
+    public void OnNext(Bomb value)
+    {
+        bombsDroppedCount--;
+        Debug.Log("Bomb destroyed. Remaining bombs: " + bombsDroppedCount);
+    }
+
+    //IObserver implementation
+    public void OnError(Exception error)
+    {
+        Debug.Log("Error: " + error.Message);
+    }
+
+    //IObserver implementation
+    public void OnCompleted()
+    {
+        //Unsubscribe from bomb
+        bombUnsubscriber.Dispose();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //check if collision with power up
+        if (collision.CompareTag("PowerUp"))
+        {
+            maxBombs++;
+            Destroy(collision.gameObject);
+        }
     }
 }
