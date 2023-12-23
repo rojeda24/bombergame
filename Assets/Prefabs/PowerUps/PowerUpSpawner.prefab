@@ -45,3 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bombPowerUpPrefab: {fileID: 6877388646409777817, guid: 47a36f6dec8d541438be230af930f3b0, type: 3}
+  moreExplosionPowerUpPrefab: {fileID: 6339894577714601779, guid: 2d89d1ae3ce3638489c09b695d1ccb7e, type: 3}
+  fasterPowerUpPrefab: {fileID: 2554373415851644890, guid: d8bc81abdf7a59c41b6d64b75f5f4238, type: 3}
