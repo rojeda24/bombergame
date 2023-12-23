@@ -6,8 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class Bomb : MonoBehaviour, IObservable<Bomb>
 {
-    [SerializeField]
-    private int powerLevel = 1;
+    public int powerLevel = 1;
 
     [SerializeField] private GameObject explosionPrefab;
 
@@ -25,6 +24,12 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
     [SerializeField] private Sprite explosionCornerDownSprite;
 
     [SerializeField] private Tilemap wallsTilemap = null;
+
+    //Constructor defining power level
+    public Bomb(int powerLevel)
+    {
+        this.powerLevel = powerLevel;
+    }
 
     // Start is called before the first frame update
     void Start()
