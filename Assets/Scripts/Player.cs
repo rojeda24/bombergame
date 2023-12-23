@@ -41,26 +41,6 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         stepTarget = rigidBody.position;
     }
 
-    private void OnEnable()
-    {
-        input.Enable();
-        input.Player.Movement.performed += OnMovementPerformed;
-        input.Player.Movement.canceled += OnMovementCancelled;
-        input.Player.Bomb.performed += OnBombPerformed;
-    }
-
-    private void OnDisable()
-    {
-        input.Disable();
-        input.Player.Movement.performed -= OnMovementPerformed;
-        input.Player.Movement.canceled -= OnMovementCancelled;
-    }
-
-    private void Update()
-    {
-        
-    }
-
     /// <summary>
     /// Player's Rigidbody2D properties are updated here.
     /// </summary>
@@ -86,6 +66,31 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         }
 
         /*
+         * TAKING MOVEMENT DECISIONS
+         */
+        if (rigidBody.position == stepTarget)
+        {
+            rigidBody.velocity = Vector2.zero;
+        } 
+        else if (IsTargetBlocked())
+        {
+            rigidBody.velocity = Vector2.zero;
+            stepTarget = rigidBody.position;
+        }
+        //Move to step target
+        else
+        {
+            rigidBody.velocity = currentDirection * moveSpeed;
+        }
+    }
+
+    /// <summary>
+    /// Check if player's target is blocked by a wall, bomb or block.
+    /// </summary>
+    /// <returns></returns>
+    private bool IsTargetBlocked()
+    {
+        /*
          * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
          */
         //Get left and right shoulder targets.
@@ -103,47 +108,46 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         Vector3Int cellCollisioningRightShoulder = wallsTilemap.WorldToCell(rightShoulderTargetV3);
 
         /*
-         * CHECKING FOR BOMBS
+         * CHECK FOR BOMBS AND BLOCKS COLLIDERS
          */
         //Check if target is colliding with bomb or block to stop movement
-        Vector2 farTarget = stepTarget + currentDirection/2;
-
+        Vector2 farTarget = stepTarget + currentDirection / 2; //Avoid being between two tiles
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
-        bool mustStop = false;
         foreach (Collider2D hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Bomb") || hitCollider.CompareTag("Block"))
             {
-                //avoid stoping by bombs in the same cell as player
-                if (wallsTilemap.WorldToCell(rigidBody.position) == wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position))
+                //avoid locked by bombs in the same cell as player
+                Vector3Int playerCellPosition = wallsTilemap.WorldToCell(rigidBody.position);
+                Vector3Int objectCollidingCellPosition = wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position);
+                if (playerCellPosition == objectCollidingCellPosition)
                 {
                     continue;
                 }
-                mustStop = true;
-                break;
-            } 
+                return true;
+            }
         }
 
-        /*
-         * TAKING MOVEMENT DECISIONS
-         */
-        if (rigidBody.position == stepTarget)
-        {
-            rigidBody.velocity = Vector2.zero;
-        } 
-        else if (
-            wallsTilemap.HasTile(cellCollisioningLeftShoulder) 
-            || wallsTilemap.HasTile(cellCollisioningRightShoulder)
-            || mustStop)
-        {
-            rigidBody.velocity = Vector2.zero;
-            stepTarget = rigidBody.position;
-        }
-        //Move to step target
-        else
-        {
-            rigidBody.velocity = currentDirection * moveSpeed;
-        }
+        //Check for walls tilemaps
+        if (wallsTilemap.HasTile(cellCollisioningLeftShoulder) || wallsTilemap.HasTile(cellCollisioningRightShoulder))
+            return true;
+
+        return false;
+    }
+
+
+    private void OnEnable()
+    {
+        input.Enable();
+        input.Player.Movement.performed += OnMovementPerformed;
+        input.Player.Movement.canceled += OnMovementCancelled;
+        input.Player.Bomb.performed += OnBombPerformed;
+    }
+    private void OnDisable()
+    {
+        input.Disable();
+        input.Player.Movement.performed -= OnMovementPerformed;
+        input.Player.Movement.canceled -= OnMovementCancelled;
     }
 
     /// <summary>
