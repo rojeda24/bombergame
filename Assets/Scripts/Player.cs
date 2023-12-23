@@ -10,8 +10,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 {
     //Player attributes
     private Rigidbody2D rigidBody = null;
-    [SerializeField]
-    private float moveSpeed = 3f;
+    public float moveSpeed = 3f;
     private int bombsDroppedCount = 0;
     public int maxBombs = 1;
     public int powerLevel = 1;

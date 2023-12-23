@@ -11,6 +11,7 @@ public class PowerUpSpawner : MonoBehaviour
     private Queue<Vector3> spawnQueue = new Queue<Vector3>();
     [SerializeField] private GameObject bombPowerUpPrefab = null;
     [SerializeField] private GameObject moreExplosionPowerUpPrefab = null;
+    [SerializeField] private GameObject fasterPowerUpPrefab = null;
 
     private void Awake()
     {
@@ -30,14 +31,21 @@ public class PowerUpSpawner : MonoBehaviour
         while (spawnQueue.Count > 0)
         {
             var position = spawnQueue.Dequeue();
-            // 50% chance of spawning a more explosion power up
-            if (Random.Range(0, 10) < 5)
+            int random = Random.Range(0, 10);
+            // 30% chance of spawning a more explosion power up
+            if (random < 3)
             {
                 Instantiate(moreExplosionPowerUpPrefab, position, Quaternion.identity);
             }
-            else
+            // 40% chance of spawning a +1 bomb power up
+            else if (random < 7)
             {
                 Instantiate(bombPowerUpPrefab, position, Quaternion.identity);
+            }
+            // 30% chance of spawning a +1 speed power up
+            else
+            {
+                Instantiate(fasterPowerUpPrefab, position, Quaternion.identity);
             }
         }
     }
