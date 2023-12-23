@@ -88,18 +88,27 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     /// Check if player's target is blocked by a wall, bomb or block.
     /// </summary>
     /// <returns></returns>
-    private bool IsTargetBlocked()
+    private bool IsTargetBlocked(Vector2 target = default, Vector2 direction = default)
     {
+        if (target == default)
+        {
+            target = stepTarget;
+        }
+
+        if (direction == default)
+        {
+            direction = currentDirection;
+        }
         /*
          * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
          */
         //Get left and right shoulder targets.
         //By shoulder we mean the left and right side of player.
         //Getting both shoulders is necessary to check for collisions when player is between two tiles.
-        float leftShoulderX = stepTarget.x + currentDirection.x / 2 - currentDirection.y / 4;
-        float leftShoulderY = stepTarget.y + currentDirection.y / 2 - currentDirection.x / 4;
-        float rightShoulderX = stepTarget.x + currentDirection.x / 2 + currentDirection.y / 4;
-        float rightShoulderY = stepTarget.y + currentDirection.y / 2 + currentDirection.x / 4;
+        float leftShoulderX = target.x + direction.x / 2 - direction.y / 4;
+        float leftShoulderY = target.y + direction.y / 2 - direction.x / 4;
+        float rightShoulderX =target.x + direction.x / 2 + direction.y / 4;
+        float rightShoulderY = target.y + direction.y / 2 + direction.x / 4;
         Vector3 leftShoulderTargetV3 = new Vector2(leftShoulderX, leftShoulderY);
         Vector3 rightShoulderTargetV3 = new Vector2(rightShoulderX, rightShoulderY);
 
@@ -111,7 +120,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
          * CHECK FOR BOMBS AND BLOCKS COLLIDERS
          */
         //Check if target is colliding with bomb or block to stop movement
-        Vector2 farTarget = stepTarget + currentDirection / 2; //Avoid being between two tiles
+        Vector2 farTarget = target + direction / 2; //Avoid being between two tiles
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
         foreach (Collider2D hitCollider in hitColliders)
         {
@@ -159,7 +168,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     {
         isMoving = true;
         nextDirection = context.ReadValue<Vector2>();
-        //If two direction buttons are pressed, ignore previous direction
+        //If two direction buttons are pressed, ignore blocked direction
         if ( Math.Abs(nextDirection.x) > 0 && Math.Abs(nextDirection.y) > 0)
         {
             if (Math.Abs(currentDirection.x) > Math.Abs(currentDirection.y))
