@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Explosion
   - Block
+  - PowerUp
   layers:
   - Default
   - TransparentFX

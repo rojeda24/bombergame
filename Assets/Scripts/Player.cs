@@ -199,7 +199,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         Bomb bomb = Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
         this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
         bombsDroppedCount++;
-        Debug.Log("Bomb destroyed. Remaining bombs: " + bombsDroppedCount);
+        Debug.Log("Bomb added. Remaining bombs: " + bombsDroppedCount);
     }
 
     //IObserver implementation
@@ -223,5 +223,15 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     {
         //Unsubscribe from bomb
         bombUnsubscriber.Dispose();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //check if collision with power up
+        if (collision.CompareTag("PowerUp"))
+        {
+            maxBombs++;
+            Destroy(collision.gameObject);
+        }
     }
 }
