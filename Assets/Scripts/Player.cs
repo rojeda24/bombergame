@@ -17,10 +17,11 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
     //Control attributes
     private PlayerInput input = null;
-    private Vector2 currentDirection = Vector2.zero; //Direction of current movement
-    private Vector2 nextDirection = Vector2.zero; //Direction of next movement
+    private Vector2 currentDirection = Vector2.zero; //Direction of current movement where x= -0.5, 0 or 0.5 and y= -0.5, 0 or 0.5
+    private Vector2 nextDirection = Vector2.zero; //Direction of next movement where x= -0.5, 0 or 0.5 and y= -0.5, 0 or 0.5
     private Vector2 stepTarget = Vector2.zero; //Step target of current movement  
     private bool isMoving = false;
+    private Vector2 currentMovementInput = Vector2.zero;
 
     //Environment attributes
     [SerializeField]
@@ -39,26 +40,6 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
         rigidBody.position = cellCenterPosition;//TODO: change to spawn point
         stepTarget = rigidBody.position;
-    }
-
-    private void OnEnable()
-    {
-        input.Enable();
-        input.Player.Movement.performed += OnMovementPerformed;
-        input.Player.Movement.canceled += OnMovementCancelled;
-        input.Player.Bomb.performed += OnBombPerformed;
-    }
-
-    private void OnDisable()
-    {
-        input.Disable();
-        input.Player.Movement.performed -= OnMovementPerformed;
-        input.Player.Movement.canceled -= OnMovementCancelled;
-    }
-
-    private void Update()
-    {
-        
     }
 
     /// <summary>
@@ -81,47 +62,35 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         //If at step target, but still moving, update step target
         if (rigidBody.position == stepTarget && isMoving)
         {
-            stepTarget = stepTarget + nextDirection;
-            currentDirection = nextDirection;
-        }
-
-        /*
-         * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
-         */
-        //Get left and right shoulder targets.
-        //By shoulder we mean the left and right side of player.
-        //Getting both shoulders is necessary to check for collisions when player is between two tiles.
-        float leftShoulderX = stepTarget.x + currentDirection.x / 2 - currentDirection.y / 4;
-        float leftShoulderY = stepTarget.y + currentDirection.y / 2 - currentDirection.x / 4;
-        float rightShoulderX = stepTarget.x + currentDirection.x / 2 + currentDirection.y / 4;
-        float rightShoulderY = stepTarget.y + currentDirection.y / 2 + currentDirection.x / 4;
-        Vector3 leftShoulderTargetV3 = new Vector2(leftShoulderX, leftShoulderY);
-        Vector3 rightShoulderTargetV3 = new Vector2(rightShoulderX, rightShoulderY);
-
-        //Get cells of left and right shoulder targets
-        Vector3Int cellCollisioningLeftShoulder = wallsTilemap.WorldToCell(leftShoulderTargetV3);
-        Vector3Int cellCollisioningRightShoulder = wallsTilemap.WorldToCell(rightShoulderTargetV3);
-
-        /*
-         * CHECKING FOR BOMBS
-         */
-        //Check if target is colliding with bomb or block to stop movement
-        Vector2 farTarget = stepTarget + currentDirection/2;
-
-        Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
-        bool mustStop = false;
-        foreach (Collider2D hitCollider in hitColliders)
-        {
-            if (hitCollider.CompareTag("Bomb") || hitCollider.CompareTag("Block"))
+            Vector2 alternativeDirection;
+            Vector2 alternativeTarget;
+            if (Math.Abs(nextDirection.x) > Math.Abs(nextDirection.y))
             {
-                //avoid stoping by bombs in the same cell as player
-                if (wallsTilemap.WorldToCell(rigidBody.position) == wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position))
-                {
-                    continue;
-                }
-                mustStop = true;
-                break;
-            } 
+                alternativeDirection = new Vector2(0, currentMovementInput.y < 0 ? -0.5f : 0.5f); //Vector2.y = -0.5 or 0.5
+            }
+            else
+            {
+                alternativeDirection = new Vector2(currentMovementInput.x < 0 ? -0.5f : 0.5f, 0); //Vector2.x= -0.5 or 0.5
+            }
+
+            alternativeTarget = rigidBody.position + alternativeDirection;
+
+            
+            //If both directions are pressed in control, and next direction is blocked,
+            //but alternative direction is not, go to alternative direction
+            if (Math.Abs(currentMovementInput.x) > 0 
+                && Math.Abs(currentMovementInput.y) > 0 
+                && IsTargetBlocked(rigidBody.position + nextDirection) 
+                && !IsTargetBlocked(alternativeTarget, alternativeDirection))
+            {
+                stepTarget = alternativeTarget;
+                currentDirection = alternativeDirection;
+            }
+            else
+            {
+                stepTarget = stepTarget + nextDirection;
+                currentDirection = nextDirection;
+            }
         }
 
         /*
@@ -131,10 +100,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         {
             rigidBody.velocity = Vector2.zero;
         } 
-        else if (
-            wallsTilemap.HasTile(cellCollisioningLeftShoulder) 
-            || wallsTilemap.HasTile(cellCollisioningRightShoulder)
-            || mustStop)
+        else if (IsTargetBlocked())
         {
             rigidBody.velocity = Vector2.zero;
             stepTarget = rigidBody.position;
@@ -147,6 +113,83 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     }
 
     /// <summary>
+    /// Check if player's target is blocked by a wall, bomb or block.
+    /// </summary>
+    /// <param name="target">Player's next step destination</param>
+    /// <param name="direction">Vector2(int x,int y) where x and y are [-1,0,1]</param>
+    /// <returns></returns>
+    private bool IsTargetBlocked(Vector2 target = default, Vector2 direction = default)
+    {
+        if (target == default)
+        {
+            target = stepTarget;
+        }
+
+        if (direction == default)
+        {
+            direction = currentDirection;
+        }
+        /*
+         * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
+         */
+        //Get left and right shoulder targets.
+        //By shoulder we mean the left and right side of player.
+        //Getting both shoulders is necessary to check for collisions when player is between two tiles.
+        float leftShoulderX = target.x + direction.x / 2 - direction.y / 4;
+        float leftShoulderY = target.y + direction.y / 2 - direction.x / 4;
+        float rightShoulderX =target.x + direction.x / 2 + direction.y / 4;
+        float rightShoulderY = target.y + direction.y / 2 + direction.x / 4;
+        Vector3 leftShoulderTargetV3 = new Vector2(leftShoulderX, leftShoulderY);
+        Vector3 rightShoulderTargetV3 = new Vector2(rightShoulderX, rightShoulderY);
+
+        //Get cells of left and right shoulder targets
+        Vector3Int cellCollisioningLeftShoulder = wallsTilemap.WorldToCell(leftShoulderTargetV3);
+        Vector3Int cellCollisioningRightShoulder = wallsTilemap.WorldToCell(rightShoulderTargetV3);
+
+        /*
+         * CHECK FOR BOMBS AND BLOCKS COLLIDERS
+         */
+        //Check if target is colliding with bomb or block to stop movement
+        Vector2 farTarget = target + direction / 2; //Avoid being between two tiles
+        Collider2D[] hitColliders = Physics2D.OverlapPointAll(farTarget);
+        foreach (Collider2D hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Bomb") || hitCollider.CompareTag("Block"))
+            {
+                //avoid locked by bombs in the same cell as player
+                Vector3Int playerCellPosition = wallsTilemap.WorldToCell(rigidBody.position);
+                Vector3Int objectCollidingCellPosition = wallsTilemap.WorldToCell(hitCollider.gameObject.transform.position);
+                if (playerCellPosition == objectCollidingCellPosition)
+                {
+                    continue;
+                }
+                return true;
+            }
+        }
+
+        //Check for walls tilemaps
+        if (wallsTilemap.HasTile(cellCollisioningLeftShoulder) || wallsTilemap.HasTile(cellCollisioningRightShoulder))
+            return true;
+
+        return false;
+    }
+
+
+    private void OnEnable()
+    {
+        input.Enable();
+        input.Player.Movement.performed += OnMovementPerformed;
+        input.Player.Movement.canceled += OnMovementCancelled;
+        input.Player.Bomb.performed += OnBombPerformed;
+    }
+    private void OnDisable()
+    {
+        input.Disable();
+        input.Player.Movement.performed -= OnMovementPerformed;
+        input.Player.Movement.canceled -= OnMovementCancelled;
+    }
+
+    /// <summary>
     /// When movement is performed, set direction and next step target
     /// <para>We avoid changing player's velocity here</para>
     /// </summary>
@@ -154,8 +197,9 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     private void OnMovementPerformed(InputAction.CallbackContext context)
     {
         isMoving = true;
-        nextDirection = context.ReadValue<Vector2>();
-        //If two direction buttons are pressed, ignore previous direction
+        currentMovementInput = context.ReadValue<Vector2>();
+        nextDirection = currentMovementInput;
+        //If two direction buttons are pressed, ignore blocked direction
         if ( Math.Abs(nextDirection.x) > 0 && Math.Abs(nextDirection.y) > 0)
         {
             if (Math.Abs(currentDirection.x) > Math.Abs(currentDirection.y))
@@ -182,6 +226,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     private void OnMovementCancelled(InputAction.CallbackContext context)
     {
         isMoving = false;
+        currentMovementInput = Vector2.zero;
     }
 
     private void OnBombPerformed(InputAction.CallbackContext context)
