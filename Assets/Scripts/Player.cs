@@ -17,10 +17,11 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
     //Control attributes
     private PlayerInput input = null;
-    private Vector2 currentDirection = Vector2.zero; //Direction of current movement
-    private Vector2 nextDirection = Vector2.zero; //Direction of next movement
+    private Vector2 currentDirection = Vector2.zero; //Direction of current movement where x= -0.5, 0 or 0.5 and y= -0.5, 0 or 0.5
+    private Vector2 nextDirection = Vector2.zero; //Direction of next movement where x= -0.5, 0 or 0.5 and y= -0.5, 0 or 0.5
     private Vector2 stepTarget = Vector2.zero; //Step target of current movement  
     private bool isMoving = false;
+    private Vector2 currentMovementInput = Vector2.zero;
 
     //Environment attributes
     [SerializeField]
@@ -61,8 +62,35 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         //If at step target, but still moving, update step target
         if (rigidBody.position == stepTarget && isMoving)
         {
-            stepTarget = stepTarget + nextDirection;
-            currentDirection = nextDirection;
+            Vector2 alternativeDirection;
+            Vector2 alternativeTarget;
+            if (Math.Abs(nextDirection.x) > Math.Abs(nextDirection.y))
+            {
+                alternativeDirection = new Vector2(0, currentMovementInput.y < 0 ? -0.5f : 0.5f); //Vector2.y = -0.5 or 0.5
+            }
+            else
+            {
+                alternativeDirection = new Vector2(currentMovementInput.x < 0 ? -0.5f : 0.5f, 0); //Vector2.x= -0.5 or 0.5
+            }
+
+            alternativeTarget = rigidBody.position + alternativeDirection;
+
+            
+            //If both directions are pressed in control, and next direction is blocked,
+            //but alternative direction is not, go to alternative direction
+            if (Math.Abs(currentMovementInput.x) > 0 
+                && Math.Abs(currentMovementInput.y) > 0 
+                && IsTargetBlocked(rigidBody.position + nextDirection) 
+                && !IsTargetBlocked(alternativeTarget, alternativeDirection))
+            {
+                stepTarget = alternativeTarget;
+                currentDirection = alternativeDirection;
+            }
+            else
+            {
+                stepTarget = stepTarget + nextDirection;
+                currentDirection = nextDirection;
+            }
         }
 
         /*
@@ -87,6 +115,8 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     /// <summary>
     /// Check if player's target is blocked by a wall, bomb or block.
     /// </summary>
+    /// <param name="target">Player's next step destination</param>
+    /// <param name="direction">Vector2(int x,int y) where x and y are [-1,0,1]</param>
     /// <returns></returns>
     private bool IsTargetBlocked(Vector2 target = default, Vector2 direction = default)
     {
@@ -167,7 +197,8 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     private void OnMovementPerformed(InputAction.CallbackContext context)
     {
         isMoving = true;
-        nextDirection = context.ReadValue<Vector2>();
+        currentMovementInput = context.ReadValue<Vector2>();
+        nextDirection = currentMovementInput;
         //If two direction buttons are pressed, ignore blocked direction
         if ( Math.Abs(nextDirection.x) > 0 && Math.Abs(nextDirection.y) > 0)
         {
@@ -195,6 +226,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     private void OnMovementCancelled(InputAction.CallbackContext context)
     {
         isMoving = false;
+        currentMovementInput = Vector2.zero;
     }
 
     private void OnBombPerformed(InputAction.CallbackContext context)
