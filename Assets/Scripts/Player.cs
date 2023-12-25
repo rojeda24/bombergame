@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using static UnityEngine.GraphicsBuffer;
 
 public class Player : MonoBehaviour, IObserver<Bomb>
 {
@@ -17,8 +18,8 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
     //Control attributes
     private PlayerInput input = null;
-    private Vector2 currentDirection = Vector2.zero; //Direction of current movement where x= -0.5, 0 or 0.5 and y= -0.5, 0 or 0.5
-    private Vector2 nextDirection = Vector2.zero; //Direction of next movement where x= -0.5, 0 or 0.5 and y= -0.5, 0 or 0.5
+    private float stepSize = 0.5f; //Distance between two tiles
+    private Vector2 nextDirection = Vector2.zero; //Direction of next movement where x= -stepSize, 0 or stepSize and y= -stepSize, 0 or stepSize
     private Vector2 stepTarget = Vector2.zero; //Step target of current movement  
     private bool isMoving = false;
     private Vector2 currentMovementInput = Vector2.zero;
@@ -66,11 +67,11 @@ public class Player : MonoBehaviour, IObserver<Bomb>
             Vector2 alternativeTarget;
             if (Math.Abs(nextDirection.x) > Math.Abs(nextDirection.y))
             {
-                alternativeDirection = new Vector2(0, currentMovementInput.y < 0 ? -0.5f : 0.5f); //Vector2.y = -0.5 or 0.5
+                alternativeDirection = new Vector2(0, currentMovementInput.y < 0 ? -stepSize : stepSize); 
             }
             else
             {
-                alternativeDirection = new Vector2(currentMovementInput.x < 0 ? -0.5f : 0.5f, 0); //Vector2.x= -0.5 or 0.5
+                alternativeDirection = new Vector2(currentMovementInput.x < 0 ? -stepSize : stepSize, 0);
             }
 
             alternativeTarget = rigidBody.position + alternativeDirection;
@@ -81,15 +82,13 @@ public class Player : MonoBehaviour, IObserver<Bomb>
             if (Math.Abs(currentMovementInput.x) > 0 
                 && Math.Abs(currentMovementInput.y) > 0 
                 && IsTargetBlocked(rigidBody.position + nextDirection) 
-                && !IsTargetBlocked(alternativeTarget, alternativeDirection))
+                && !IsTargetBlocked(alternativeTarget))
             {
                 stepTarget = alternativeTarget;
-                currentDirection = alternativeDirection;
             }
             else
             {
                 stepTarget = stepTarget + nextDirection;
-                currentDirection = nextDirection;
             }
         }
 
@@ -108,27 +107,24 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         //Move to step target
         else
         {
-            rigidBody.velocity = currentDirection * moveSpeed;
+            rigidBody.velocity = GetStepDirection() * moveSpeed;
         }
     }
 
     /// <summary>
     /// Check if player's target is blocked by a wall, bomb or block.
     /// </summary>
-    /// <param name="target">Player's next step destination</param>
-    /// <param name="direction">Vector2(int x,int y) where x and y are [-1,0,1]</param>
+    /// <param name="target">Destination to check</param>
     /// <returns></returns>
-    private bool IsTargetBlocked(Vector2 target = default, Vector2 direction = default)
+    private bool IsTargetBlocked(Vector2 target = default)
     {
         if (target == default)
         {
             target = stepTarget;
         }
 
-        if (direction == default)
-        {
-            direction = currentDirection;
-        }
+        Vector2 direction = target - rigidBody.position; //Vector2(int x,int y) where x and y are [-1,0,1]1
+
         /*
          * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
          */
@@ -174,6 +170,18 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         return false;
     }
 
+    /// <summary>
+    /// Get direction of next step using stepTarget and rigidBody.position
+    /// </summary>
+    /// <returns>Vector2 stepDirection</returns>
+    private Vector2 GetStepDirection()
+    {
+        Vector2 direction = stepTarget - rigidBody.position; //Vector2(int x,int y) where x and y are [-1,0,1]1
+        float stepX = Mathf.Abs(direction.x) > 0 ? Mathf.Sign(direction.x) * stepSize : 0;
+        float stepY = Mathf.Abs(direction.y) > 0 ? Mathf.Sign(direction.y) * stepSize : 0;
+        return new Vector2(stepX, stepY);
+    }
+
 
     private void OnEnable()
     {
@@ -195,14 +203,14 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     /// </summary>
     /// <param name="context"></param> 
     private void OnMovementPerformed(InputAction.CallbackContext context)
-    {
+     {
         isMoving = true;
         currentMovementInput = context.ReadValue<Vector2>();
         nextDirection = currentMovementInput;
         //If two direction buttons are pressed, ignore blocked direction
         if ( Math.Abs(nextDirection.x) > 0 && Math.Abs(nextDirection.y) > 0)
         {
-            if (Math.Abs(currentDirection.x) > Math.Abs(currentDirection.y))
+            if (Math.Abs(GetStepDirection().x) > Math.Abs(GetStepDirection().y))
             {
                 nextDirection = new Vector2(0, nextDirection.y);
             }
@@ -215,11 +223,11 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         //Avoid diagonal movement
         if (Math.Abs(nextDirection.x) > Math.Abs(nextDirection.y))
         {
-            nextDirection = new Vector2(nextDirection.x < 0 ? -0.5f : 0.5f, 0); //x= -0.5 or 0.5
+            nextDirection = new Vector2(nextDirection.x < 0 ? -stepSize : stepSize, 0);
         }
         else
         {
-            nextDirection = new Vector2(0, nextDirection.y < 0 ? -0.5f : 0.5f); //y= -0.5 or 0.5
+            nextDirection = new Vector2(0, nextDirection.y < 0 ? -stepSize : stepSize); 
         }
     }
 
@@ -231,6 +239,8 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
     private void OnBombPerformed(InputAction.CallbackContext context)
     {
+        Vector2 direction = stepTarget - rigidBody.position; //Vector2(int x,int y) where x and y are [-1,0,1]1
+
         //Check if player can drop more bombs
         if (bombsDroppedCount >= maxBombs)
         {
@@ -238,7 +248,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         }
 
         //Center position to cell
-        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position + currentDirection/10); //Take into account player's direction
+        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position + direction / 10); //Take into account player's direction
         Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
         //Check if there is a bomb already in cellCenterPosition
         Collider2D[] hitColliders = Physics2D.OverlapPointAll(cellCenterPosition);
