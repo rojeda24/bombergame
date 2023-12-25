@@ -81,7 +81,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
             if (Math.Abs(currentMovementInput.x) > 0 
                 && Math.Abs(currentMovementInput.y) > 0 
                 && IsTargetBlocked(rigidBody.position + nextDirection) 
-                && !IsTargetBlocked(alternativeTarget, alternativeDirection))
+                && !IsTargetBlocked(alternativeTarget))
             {
                 stepTarget = alternativeTarget;
                 currentDirection = alternativeDirection;
@@ -115,20 +115,17 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     /// <summary>
     /// Check if player's target is blocked by a wall, bomb or block.
     /// </summary>
-    /// <param name="target">Player's next step destination</param>
-    /// <param name="direction">Vector2(int x,int y) where x and y are [-1,0,1]</param>
+    /// <param name="target">Destination to check</param>
     /// <returns></returns>
-    private bool IsTargetBlocked(Vector2 target = default, Vector2 direction = default)
+    private bool IsTargetBlocked(Vector2 target = default)
     {
         if (target == default)
         {
             target = stepTarget;
         }
 
-        if (direction == default)
-        {
-            direction = currentDirection;
-        }
+        Vector2 direction = target - rigidBody.position; //Vector2(int x,int y) where x and y are [-1,0,1]1
+
         /*
          * CHECKING FOR WALLS WHEN PLAYER IS IN THE MIDDLE OF TWO TILES
          */
