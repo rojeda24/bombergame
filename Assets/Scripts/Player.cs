@@ -10,7 +10,7 @@ using static UnityEngine.GraphicsBuffer;
 public class Player : MonoBehaviour, IObserver<Bomb>
 {
     //Player attributes
-    private Rigidbody2D rigidBody = null;
+    public Rigidbody2D rigidBody = null;
     public float moveSpeed = 3f;
     private int bombsDroppedCount = 0;
     public int maxBombs = 1;
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
     //Environment attributes
     [SerializeField]
-    private Tilemap wallsTilemap = null;
+    public Tilemap wallsTilemap = null;
     [SerializeField]
     private Bomb bombPrefab;
 
@@ -35,11 +35,6 @@ public class Player : MonoBehaviour, IObserver<Bomb>
      {
         input = new PlayerInput();
         rigidBody = GetComponent<Rigidbody2D>();
-
-        //Center position to cell
-        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
-        Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
-        rigidBody.position = cellCenterPosition;//TODO: change to spawn point
         stepTarget = rigidBody.position;
     }
 
