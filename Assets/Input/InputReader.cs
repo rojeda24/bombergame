@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "InputReader")]
-public class InputReader : ScriptableObject, PlayerInput.IPlayerActions
+public class InputReader : ScriptableObject, GameInput.IPlayerActions
 {
-    private PlayerInput _gameInput;//Refactor PlayerInput class to GameInput
+    private GameInput _gameInput;//Refactor PlayerInput class to GameInput
 
     void OnEnable()
     {
         if (_gameInput == null)
         {
-            _gameInput = new PlayerInput();
+            _gameInput = new GameInput();
             _gameInput.Player.SetCallbacks(this);
             _gameInput.Player.Enable();
         }
@@ -37,7 +37,7 @@ public class InputReader : ScriptableObject, PlayerInput.IPlayerActions
 
     public void OnBomb(UnityEngine.InputSystem.InputAction.CallbackContext context)
     {
-        MoveEvent?.Invoke(context.ReadValue<Vector2>());
+        BombEvent?.Invoke();
     }
 
 }
