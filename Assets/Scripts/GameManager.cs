@@ -10,9 +10,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int numberOfPlayers = 1; // Set the number of players
     public GameObject playerPrefab; // Reference to the player prefab
-    [SerializeField] private Vector3[] playerSpawnList;
+    [SerializeField] private Vector3[] locationList;
 
     // Start is called before the first frame update
     void Start()
@@ -41,12 +40,22 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayers()
     {
-        foreach (Vector3 playerSpawn in playerSpawnList)
+        for (int n = 0; n<locationList.Length; n++)
         {
             // Instantiate a new player at the origin
-            GameObject playerObj = Instantiate(playerPrefab, playerSpawn, Quaternion.identity);
+            GameObject playerObj = Instantiate(playerPrefab, locationList[n], Quaternion.identity);
             Player player = playerObj.GetComponent<Player>();
             player.wallsTilemap = GameObject.Find("WallsTilemap").GetComponent<Tilemap>();
+            //get player sprite renderer
+            SpriteRenderer playerSpriteRenderer = playerObj.GetComponent<SpriteRenderer>();
+            //set player color
+            playerSpriteRenderer.color = n == 0 ? Color.red : Color.cyan;
+
+            player.input = ScriptableObject.CreateInstance<InputReader>();
+            if (n == 1)
+            {
+                player.input.SetPlayer2();
+            }
         }
     }
 }

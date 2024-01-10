@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "InputReader")]
-public class InputReader : ScriptableObject, GameInput.IPlayerActions
+public class InputReader : ScriptableObject, GameInput.IPlayerActions, GameInput.IPlayer2Actions
 {
     private GameInput _gameInput;//Refactor PlayerInput class to GameInput
 
@@ -15,7 +15,14 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
             _gameInput = new GameInput();
             _gameInput.Player.SetCallbacks(this);
             _gameInput.Player.Enable();
+            _gameInput.Player2.SetCallbacks(this);
         }
+    }
+
+    public void SetPlayer2()
+    {
+        _gameInput.Player.Disable();
+        _gameInput.Player2.Enable();
     }
 
     public event Action<Vector2> MoveEvent;

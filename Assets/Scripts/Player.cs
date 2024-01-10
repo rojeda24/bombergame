@@ -17,8 +17,7 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     public int powerLevel = 1;
 
     //Control attributes
-    [SerializeField]
-    private InputReader input = null;
+    public InputReader input = null;
     private float stepSize = 0.5f; //Distance between two tiles
     private Vector2 nextDirection = Vector2.zero; //Direction of next movement where x= -stepSize, 0 or stepSize and y= -stepSize, 0 or stepSize
     private Vector2 stepTarget = Vector2.zero; //Step target of current movement  
