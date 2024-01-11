@@ -10,14 +10,15 @@ using static UnityEngine.GraphicsBuffer;
 public class Player : MonoBehaviour, IObserver<Bomb>
 {
     //Player attributes
-    private Rigidbody2D rigidBody = null;
+    public int id;
+    public Rigidbody2D rigidBody = null;
     public float moveSpeed = 3f;
     private int bombsDroppedCount = 0;
     public int maxBombs = 1;
     public int powerLevel = 1;
 
     //Control attributes
-    private PlayerInput input = null;
+    public InputReader input = null;
     private float stepSize = 0.5f; //Distance between two tiles
     private Vector2 nextDirection = Vector2.zero; //Direction of next movement where x= -stepSize, 0 or stepSize and y= -stepSize, 0 or stepSize
     private Vector2 stepTarget = Vector2.zero; //Step target of current movement  
@@ -26,21 +27,22 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
     //Environment attributes
     [SerializeField]
-    private Tilemap wallsTilemap = null;
+    public Tilemap wallsTilemap = null;
     [SerializeField]
     private Bomb bombPrefab;
 
+    public event Action<Player> DeadEvent;
 
     private void Awake()
      {
-        input = new PlayerInput();
         rigidBody = GetComponent<Rigidbody2D>();
-
-        //Center position to cell
-        Vector3Int cellPosition = wallsTilemap.WorldToCell(rigidBody.position);
-        Vector3 cellCenterPosition = wallsTilemap.GetCellCenterWorld(cellPosition);
-        rigidBody.position = cellCenterPosition;//TODO: change to spawn point
         stepTarget = rigidBody.position;
+    }
+
+    public void Die()
+    {
+        DeadEvent?.Invoke(this);
+        GetComponent<SpriteRenderer>().color = Color.black;
     }
 
     /// <summary>
@@ -182,19 +184,11 @@ public class Player : MonoBehaviour, IObserver<Bomb>
         return new Vector2(stepX, stepY);
     }
 
-
-    private void OnEnable()
+    private void Start()
     {
-        input.Enable();
-        input.Player.Movement.performed += OnMovementPerformed;
-        input.Player.Movement.canceled += OnMovementCancelled;
-        input.Player.Bomb.performed += OnBombPerformed;
-    }
-    private void OnDisable()
-    {
-        input.Disable();
-        input.Player.Movement.performed -= OnMovementPerformed;
-        input.Player.Movement.canceled -= OnMovementCancelled;
+        input.MoveEvent += OnMovementPerformed;
+        input.MoveCancelledEvent += OnMovementCancelled;
+        input.BombEvent += OnBombPerformed;
     }
 
     /// <summary>
@@ -202,42 +196,42 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     /// <para>We avoid changing player's velocity here</para>
     /// </summary>
     /// <param name="context"></param> 
-    private void OnMovementPerformed(InputAction.CallbackContext context)
+    private void OnMovementPerformed(Vector2 move)
      {
         isMoving = true;
-        currentMovementInput = context.ReadValue<Vector2>();
-        nextDirection = currentMovementInput;
         //If two direction buttons are pressed, ignore blocked direction
-        if ( Math.Abs(nextDirection.x) > 0 && Math.Abs(nextDirection.y) > 0)
+        if ( Math.Abs(move.x) > 0 && Math.Abs(move.y) > 0)
         {
             if (Math.Abs(GetStepDirection().x) > Math.Abs(GetStepDirection().y))
             {
-                nextDirection = new Vector2(0, nextDirection.y);
+                move = new Vector2(0, move.y);
             }
             else
             {
-                nextDirection = new Vector2(nextDirection.x, 0);
+                move = new Vector2(move.x, 0);
             }
         }
 
         //Avoid diagonal movement
-        if (Math.Abs(nextDirection.x) > Math.Abs(nextDirection.y))
+        if (Math.Abs(move.x) > Math.Abs(move.y))
         {
-            nextDirection = new Vector2(nextDirection.x < 0 ? -stepSize : stepSize, 0);
+            move = new Vector2(move.x < 0 ? -stepSize : stepSize, 0);
         }
         else
         {
-            nextDirection = new Vector2(0, nextDirection.y < 0 ? -stepSize : stepSize); 
+            move = new Vector2(0, move.y < 0 ? -stepSize : stepSize); 
         }
+
+        nextDirection = move;
     }
 
-    private void OnMovementCancelled(InputAction.CallbackContext context)
+    private void OnMovementCancelled()
     {
         isMoving = false;
         currentMovementInput = Vector2.zero;
     }
 
-    private void OnBombPerformed(InputAction.CallbackContext context)
+    private void OnBombPerformed()
     {
         Vector2 direction = stepTarget - rigidBody.position; //Vector2(int x,int y) where x and y are [-1,0,1]1
 

@@ -25,12 +25,6 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
 
     [SerializeField] private Tilemap wallsTilemap = null;
 
-    //Constructor defining power level
-    public Bomb(int powerLevel)
-    {
-        this.powerLevel = powerLevel;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -119,6 +113,10 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
             {
                 Destroy(collider.gameObject, 1f);
                 return false;
+            } 
+            else if (collider.CompareTag("Player"))
+            {
+                collider.GetComponent<Player>().Die();
             }
         }
 
