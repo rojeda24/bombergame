@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
             // Instantiate a new player at the origin
             GameObject playerObj = Instantiate(playerPrefab, locationList[n], Quaternion.identity);
             Player player = playerObj.GetComponent<Player>();
+            player.id = n + 1;
             player.wallsTilemap = GameObject.Find("WallsTilemap").GetComponent<Tilemap>();
             //get player sprite renderer
             SpriteRenderer playerSpriteRenderer = playerObj.GetComponent<SpriteRenderer>();
@@ -56,6 +58,13 @@ public class GameManager : MonoBehaviour
             {
                 player.input.SetPlayer2();
             }
+
+            player.DeadEvent += OnDieEvent;
         }
+    }
+
+    private void OnDieEvent(Player player)
+    {
+        Debug.Log($"Player {player.id} died");
     }
 }

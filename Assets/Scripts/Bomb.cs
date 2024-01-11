@@ -113,6 +113,10 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
             {
                 Destroy(collider.gameObject, 1f);
                 return false;
+            } 
+            else if (collider.CompareTag("Player"))
+            {
+                collider.GetComponent<Player>().Die();
             }
         }
 

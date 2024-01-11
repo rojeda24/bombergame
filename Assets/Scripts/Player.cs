@@ -10,6 +10,7 @@ using static UnityEngine.GraphicsBuffer;
 public class Player : MonoBehaviour, IObserver<Bomb>
 {
     //Player attributes
+    public int id;
     public Rigidbody2D rigidBody = null;
     public float moveSpeed = 3f;
     private int bombsDroppedCount = 0;
@@ -30,11 +31,18 @@ public class Player : MonoBehaviour, IObserver<Bomb>
     [SerializeField]
     private Bomb bombPrefab;
 
+    public event Action<Player> DeadEvent;
 
     private void Awake()
      {
         rigidBody = GetComponent<Rigidbody2D>();
         stepTarget = rigidBody.position;
+    }
+
+    public void Die()
+    {
+        DeadEvent?.Invoke(this);
+        GetComponent<SpriteRenderer>().color = Color.black;
     }
 
     /// <summary>
