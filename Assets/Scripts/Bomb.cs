@@ -6,31 +6,32 @@ using UnityEngine.Tilemaps;
 
 public class Bomb : MonoBehaviour
 {
-    public int powerLevel = 1;
+    //Define get;set; for PowerLevel
+    public int PowerLevel { get; set; }
 
-    [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private GameObject _explosionPrefab;
 
     //Explosion sprites
-    [SerializeField] private Sprite explosionCenterSprite;
+    [SerializeField] private Sprite _explosionCenterSprite;
 
-    [SerializeField] private Sprite explosionMiddleLeftSprite;
-    [SerializeField] private Sprite explosionMiddleRightSprite;
-    [SerializeField] private Sprite explosionMiddleUpSprite;
-    [SerializeField] private Sprite explosionMiddleDownSprite;
+    [SerializeField] private Sprite _explosionMiddleLeftSprite;
+    [SerializeField] private Sprite _explosionMiddleRightSprite;
+    [SerializeField] private Sprite _explosionMiddleUpSprite;
+    [SerializeField] private Sprite _explosionMiddleDownSprite;
 
-    [SerializeField] private Sprite explosionCornerLeftSprite;
-    [SerializeField] private Sprite explosionCornerRightSprite;
-    [SerializeField] private Sprite explosionCornerUpSprite;
-    [SerializeField] private Sprite explosionCornerDownSprite;
+    [SerializeField] private Sprite _explosionCornerLeftSprite;
+    [SerializeField] private Sprite _explosionCornerRightSprite;
+    [SerializeField] private Sprite _explosionCornerUpSprite;
+    [SerializeField] private Sprite _explosionCornerDownSprite;
 
-    [SerializeField] private Tilemap wallsTilemap = null;
+    private Tilemap _wallsTilemap = null;
 
-    public event Action OnExplode;//Event to notify when bomb explodes
+    public event Action ExplodeEvent;//Event to notify when bomb explodes
 
     // Start is called before the first frame update
     void Start()
     {
-        wallsTilemap = GameObject.Find("WallsTilemap").GetComponent<Tilemap>();
+        _wallsTilemap = GameObject.Find("WallsTilemap").GetComponent<Tilemap>();
         StartCoroutine(LightingFuse());
     }
 
@@ -40,7 +41,7 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    public void Explode()
+    private void Explode()
     {
 
         bool isLeftBlocked = false;
@@ -49,64 +50,64 @@ public class Bomb : MonoBehaviour
         bool isDownBlocked = false;
 
         //Instantiate explosion in the center
-        explosionPrefab.GetComponent<SpriteRenderer>().sprite = explosionCenterSprite;
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        _explosionPrefab.GetComponent<SpriteRenderer>().sprite = _explosionCenterSprite;
+        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
 
         int powerCounter = 1;
-        while (powerCounter < powerLevel)
+        while (powerCounter < PowerLevel)
         {
             //Instantiate middle explosions in all directions
             if (!isLeftBlocked)
-                isLeftBlocked = !TryToExplodeByDistance(explosionMiddleLeftSprite, -powerCounter, 0);
+                isLeftBlocked = !TryToExplodeByDistance(_explosionMiddleLeftSprite, -powerCounter, 0);
 
             if (!isRightBlocked)
-                isRightBlocked = !TryToExplodeByDistance(explosionMiddleRightSprite, powerCounter, 0);
+                isRightBlocked = !TryToExplodeByDistance(_explosionMiddleRightSprite, powerCounter, 0);
 
             if (!isUpBlocked)
-                isUpBlocked = !TryToExplodeByDistance(explosionMiddleUpSprite, 0, powerCounter);
+                isUpBlocked = !TryToExplodeByDistance(_explosionMiddleUpSprite, 0, powerCounter);
 
             if (!isDownBlocked)
-                isDownBlocked = !TryToExplodeByDistance(explosionMiddleDownSprite, 0, -powerCounter);
+                isDownBlocked = !TryToExplodeByDistance(_explosionMiddleDownSprite, 0, -powerCounter);
 
             powerCounter++;
         }
         //Instantiate corners
         if (!isLeftBlocked)
-            TryToExplodeByDistance(explosionCornerLeftSprite, -powerCounter, 0);
+            TryToExplodeByDistance(_explosionCornerLeftSprite, -powerCounter, 0);
 
         if (!isRightBlocked)
-            TryToExplodeByDistance(explosionCornerRightSprite, powerCounter, 0);
+            TryToExplodeByDistance(_explosionCornerRightSprite, powerCounter, 0);
 
         if (!isUpBlocked)
-            TryToExplodeByDistance(explosionCornerUpSprite, 0, powerCounter);
+            TryToExplodeByDistance(_explosionCornerUpSprite, 0, powerCounter);
 
         if (!isDownBlocked)
-            TryToExplodeByDistance(explosionCornerDownSprite, 0, -powerCounter);
+            TryToExplodeByDistance(_explosionCornerDownSprite, 0, -powerCounter);
 
-        OnExplode?.Invoke();
+        ExplodeEvent?.Invoke();
         Destroy(gameObject);
     }
 
     /// <summary>
     /// Checks position away of bomb and instantiate explosion if there is no wall or block.
     /// </summary>
-    /// <param name="sprite"></param>
-    /// <param name="xAway"></param>
-    /// <param name="yAway"></param>
+    /// <param name="sprite">sprite to represent explosion in tile</param>
+    /// <param name="xAway">x tiles away from bomb</param>
+    /// <param name="yAway">y tiles away from bomb</param>
     /// <returns>true if explosion should continue</returns>
     private bool TryToExplodeByDistance(Sprite sprite, int xAway, int yAway)
     {
         //Check if there is a wall
         Vector3 newPosition = transform.position + new Vector3(xAway, yAway,0);
-        Vector3Int cellToCheck = wallsTilemap.WorldToCell(newPosition);
-        if (wallsTilemap.HasTile(cellToCheck))
+        Vector3Int cellToCheck = _wallsTilemap.WorldToCell(newPosition);
+        if (_wallsTilemap.HasTile(cellToCheck))
         {
             return false;
         }
 
         //Instantiate explosion
-        explosionPrefab.GetComponent<SpriteRenderer>().sprite = sprite;
-        Instantiate(explosionPrefab, newPosition, Quaternion.identity);
+        _explosionPrefab.GetComponent<SpriteRenderer>().sprite = sprite;
+        Instantiate(_explosionPrefab, newPosition, Quaternion.identity);
 
         //Check if there is a block
         Collider2D[] colliders = Physics2D.OverlapPointAll(newPosition);

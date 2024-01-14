@@ -6,6 +6,6 @@ public class ExtraBombPowerUp : PowerUp
 {
     public override void ApplyPowerUp(Player player)
     {
-        player.maxBombs++;
+        player.MaxBombs++;
     }
 }

@@ -25,12 +25,12 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     ""maps"": [
         {
             ""name"": ""Player"",
-            ""id"": ""d9448510-6382-433e-963c-77dd5340928b"",
+            ""Id"": ""d9448510-6382-433e-963c-77dd5340928b"",
             ""actions"": [
                 {
                     ""name"": ""Movement"",
                     ""type"": ""Value"",
-                    ""id"": ""7b957810-2c59-4d3c-ac4b-419ff5e556cd"",
+                    ""Id"": ""7b957810-2c59-4d3c-ac4b-419ff5e556cd"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -39,7 +39,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Bomb"",
                     ""type"": ""Button"",
-                    ""id"": ""06fb20ea-8599-4ecf-aaad-be326ccf07bf"",
+                    ""Id"": ""06fb20ea-8599-4ecf-aaad-be326ccf07bf"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -49,7 +49,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": ""WASD"",
-                    ""id"": ""9f10189c-b736-4f19-ab00-d7b9c4973426"",
+                    ""Id"": ""9f10189c-b736-4f19-ab00-d7b9c4973426"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -60,7 +60,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""up"",
-                    ""id"": ""6a002976-0d50-4a74-aa49-c2d1ea93a5ec"",
+                    ""Id"": ""6a002976-0d50-4a74-aa49-c2d1ea93a5ec"",
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -71,7 +71,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""down"",
-                    ""id"": ""6d85327f-ac98-463d-9499-937838101801"",
+                    ""Id"": ""6d85327f-ac98-463d-9499-937838101801"",
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -82,7 +82,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""left"",
-                    ""id"": ""89457697-92fd-4077-b4af-dc532701861b"",
+                    ""Id"": ""89457697-92fd-4077-b4af-dc532701861b"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -93,7 +93,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""right"",
-                    ""id"": ""736cbcb4-0b1d-467d-b45b-2dbb4350dc92"",
+                    ""Id"": ""736cbcb4-0b1d-467d-b45b-2dbb4350dc92"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -104,7 +104,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""DPad"",
-                    ""id"": ""94a4000f-f929-4059-9815-b02259d49d4f"",
+                    ""Id"": ""94a4000f-f929-4059-9815-b02259d49d4f"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -115,7 +115,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""up"",
-                    ""id"": ""a6e2293a-90a9-4e8c-81f7-8541c25dfff9"",
+                    ""Id"": ""a6e2293a-90a9-4e8c-81f7-8541c25dfff9"",
                     ""path"": ""<Gamepad>/dpad/up"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -126,7 +126,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""down"",
-                    ""id"": ""03e335c5-e4ec-48f0-bea2-30b015d81aed"",
+                    ""Id"": ""03e335c5-e4ec-48f0-bea2-30b015d81aed"",
                     ""path"": ""<Gamepad>/dpad/down"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -137,7 +137,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""left"",
-                    ""id"": ""27ba605f-3879-4f2f-bec5-6c5dd044d6e9"",
+                    ""Id"": ""27ba605f-3879-4f2f-bec5-6c5dd044d6e9"",
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -148,7 +148,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""right"",
-                    ""id"": ""09afb8c7-2c89-4cba-b55d-c428ae3c42f4"",
+                    ""Id"": ""09afb8c7-2c89-4cba-b55d-c428ae3c42f4"",
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -159,7 +159,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""ed43dec1-df6e-4083-a303-a97aea6f13aa"",
+                    ""Id"": ""ed43dec1-df6e-4083-a303-a97aea6f13aa"",
                     ""path"": ""<Keyboard>/b"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -170,7 +170,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""ffc9ff5f-44f7-4a17-a2a7-2cd6db4d45be"",
+                    ""Id"": ""ffc9ff5f-44f7-4a17-a2a7-2cd6db4d45be"",
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -181,7 +181,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d504a09f-b536-4898-8766-af04c8c403cb"",
+                    ""Id"": ""d504a09f-b536-4898-8766-af04c8c403cb"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -194,12 +194,12 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         },
         {
             ""name"": ""Player2"",
-            ""id"": ""0b32805e-8371-4a8d-8d6b-e742f19b74ae"",
+            ""Id"": ""0b32805e-8371-4a8d-8d6b-e742f19b74ae"",
             ""actions"": [
                 {
                     ""name"": ""Movement"",
                     ""type"": ""Value"",
-                    ""id"": ""6349da3e-6960-4c2d-91fe-ad529a867963"",
+                    ""Id"": ""6349da3e-6960-4c2d-91fe-ad529a867963"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -208,7 +208,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Bomb"",
                     ""type"": ""Button"",
-                    ""id"": ""83bf344f-cd2d-4560-b845-51a0bda8d95e"",
+                    ""Id"": ""83bf344f-cd2d-4560-b845-51a0bda8d95e"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -218,7 +218,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": ""Arrows"",
-                    ""id"": ""dc1abf6a-fa0a-46c3-ad2b-f803d06b8c15"",
+                    ""Id"": ""dc1abf6a-fa0a-46c3-ad2b-f803d06b8c15"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -229,7 +229,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""up"",
-                    ""id"": ""bfc5c40d-e977-4c8e-bae4-45d09225f250"",
+                    ""Id"": ""bfc5c40d-e977-4c8e-bae4-45d09225f250"",
                     ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -240,7 +240,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""down"",
-                    ""id"": ""6757dc46-08a5-4c10-8611-92df59a828d9"",
+                    ""Id"": ""6757dc46-08a5-4c10-8611-92df59a828d9"",
                     ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -251,7 +251,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""left"",
-                    ""id"": ""0c512314-b374-41f8-8b3a-5a3dea1fa498"",
+                    ""Id"": ""0c512314-b374-41f8-8b3a-5a3dea1fa498"",
                     ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -262,7 +262,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""right"",
-                    ""id"": ""b2a91da2-1645-4be9-825c-c5298cb6bc50"",
+                    ""Id"": ""b2a91da2-1645-4be9-825c-c5298cb6bc50"",
                     ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -273,7 +273,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""08b56235-aa66-4fdc-bf6f-ccfac0c1fe39"",
+                    ""Id"": ""08b56235-aa66-4fdc-bf6f-ccfac0c1fe39"",
                     ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",
                     ""processors"": """",

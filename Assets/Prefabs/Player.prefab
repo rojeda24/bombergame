@@ -99,13 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df741e2f9bbbf5343af3f4efda6a61b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidBody: {fileID: 0}
-  moveSpeed: 3
-  maxBombs: 1
-  powerLevel: 1
-  input: {fileID: 11400000, guid: a1fc0edb989e26447ba71effdd8e05d6, type: 2}
-  wallsTilemap: {fileID: 931763348569687461, guid: c5e3ed03dd69e5f459c3e818e72a9360, type: 3}
-  bombPrefab: {fileID: -8690302203897050199, guid: c1841a25e3286b944b17fd745b673e0f, type: 3}
+  _bombPrefab: {fileID: -8690302203897050199, guid: c1841a25e3286b944b17fd745b673e0f, type: 3}
+  WallsTilemap: {fileID: 0}
 --- !u!50 &6525911388206625646
 Rigidbody2D:
   serializedVersion: 4
