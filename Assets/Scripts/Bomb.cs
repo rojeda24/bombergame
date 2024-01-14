@@ -25,7 +25,7 @@ public class Bomb : MonoBehaviour
 
     [SerializeField] private Tilemap wallsTilemap = null;
 
-    public event Action OnExplode;
+    public event Action OnExplode;//Event to notify when bomb explodes
 
     // Start is called before the first frame update
     void Start()

@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Bomb bombPrefab;
 
-    public event Action<Player> DeadEvent;
+    public event Action<Player> DeadEvent;//Event to notify when player dies
 
     private void Awake()
      {
@@ -256,8 +256,7 @@ public class Player : MonoBehaviour
 
         Bomb bomb = Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
         bomb.powerLevel = powerLevel;
-        //this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
-        bomb.OnExplode += () => 
+        bomb.OnExplode += () =>//Subscribe to know when bomb is destroyed
         { 
             bombsDroppedCount--; 
             Debug.Log("Bomb destroyed. Remaining bombs: " + bombsDroppedCount); 
