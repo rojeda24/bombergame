@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    private void OnDestroy()
+    public void Explode()
     {
         PowerUpSpawner.Instance.AddToQueue(transform.position);
+        Destroy(gameObject);
     }
 }
