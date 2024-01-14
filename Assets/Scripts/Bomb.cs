@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Bomb : MonoBehaviour, IObservable<Bomb>
+public class Bomb : MonoBehaviour
 {
     public int powerLevel = 1;
 
@@ -24,6 +24,8 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
     [SerializeField] private Sprite explosionCornerDownSprite;
 
     [SerializeField] private Tilemap wallsTilemap = null;
+
+    public event Action OnExplode;
 
     // Start is called before the first frame update
     void Start()
@@ -81,6 +83,7 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
         if (!isDownBlocked)
             TryToExplodeByDistance(explosionCornerDownSprite, 0, -powerCounter);
 
+        OnExplode?.Invoke();
         Destroy(gameObject);
     }
 
@@ -129,38 +132,6 @@ public class Bomb : MonoBehaviour, IObservable<Bomb>
         if (collision.CompareTag("Explosion"))
         {
             Explode();
-        }
-    }
-
-    //IObservable implementation
-    private IObserver<Bomb> observer;
-
-    private void OnDestroy()
-    {
-        observer?.OnNext(this);
-        observer?.OnCompleted();
-    }
-
-    //IObservable implementation
-    public IDisposable Subscribe(IObserver<Bomb> observer)
-    {
-        this.observer = observer;
-        return new Unsubscriber<Bomb>(observer);
-    }
-
-    //IObservable implementation
-    private class Unsubscriber<Bomb> : IDisposable
-    {
-        private IObserver<Bomb> _observer;
-
-        public Unsubscriber(IObserver<Bomb> observer)
-        {
-            this._observer = observer;
-        }
-
-        public void Dispose()
-        {
-            _observer = null;
         }
     }
 }

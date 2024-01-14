@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using static UnityEngine.GraphicsBuffer;
 
-public class Player : MonoBehaviour, IObserver<Bomb>
+public class Player : MonoBehaviour
 {
     //Player attributes
     public int id;
@@ -256,32 +256,14 @@ public class Player : MonoBehaviour, IObserver<Bomb>
 
         Bomb bomb = Instantiate(bombPrefab, cellCenterPosition, Quaternion.identity);
         bomb.powerLevel = powerLevel;
-        this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
+        //this.bombUnsubscriber = bomb.Subscribe(this);//To know when bomb is destroyed
+        bomb.OnExplode += () => 
+        { 
+            bombsDroppedCount--; 
+            Debug.Log("Bomb destroyed. Remaining bombs: " + bombsDroppedCount); 
+        };
         bombsDroppedCount++;
         Debug.Log("Bomb added. Remaining bombs: " + bombsDroppedCount);
-    }
-
-    //IObserver implementation
-    private IDisposable bombUnsubscriber;
-
-    //IObserver implementation
-    public void OnNext(Bomb value)
-    {
-        bombsDroppedCount--;
-        Debug.Log("Bomb destroyed. Remaining bombs: " + bombsDroppedCount);
-    }
-
-    //IObserver implementation
-    public void OnError(Exception error)
-    {
-        Debug.Log("Error: " + error.Message);
-    }
-
-    //IObserver implementation
-    public void OnCompleted()
-    {
-        //Unsubscribe from bomb
-        bombUnsubscriber.Dispose();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
