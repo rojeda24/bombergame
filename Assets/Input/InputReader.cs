@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "InputReader")]
 public class InputReader : ScriptableObject, GameInput.IPlayerActions, GameInput.IPlayer2Actions
 {
-    private GameInput _gameInput;//Refactor PlayerInput class to GameInput
+    private GameInput _gameInput;
 
     void OnEnable()
     {

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,10 +7,10 @@ using UnityEngine;
 public class PowerUpSpawner : MonoBehaviour
 {
     public static PowerUpSpawner Instance { get; private set; }
-    private Queue<Vector3> spawnQueue = new Queue<Vector3>();
-    [SerializeField] private GameObject bombPowerUpPrefab = null;
-    [SerializeField] private GameObject moreExplosionPowerUpPrefab = null;
-    [SerializeField] private GameObject fasterPowerUpPrefab = null;
+    private Queue<Vector3> _spawnQueue = new Queue<Vector3>();
+    [SerializeField] private GameObject _extraBombPowerUpPrefab = null;
+    [SerializeField] private GameObject _moreExplosionPowerUpPrefab = null;
+    [SerializeField] private GameObject _fasterPowerUpPrefab = null;
 
     private void Awake()
     {
@@ -28,30 +27,30 @@ public class PowerUpSpawner : MonoBehaviour
     void Update()
     {
         // Spawn all power ups in the queue
-        while (spawnQueue.Count > 0)
+        while (_spawnQueue.Count > 0)
         {
-            var position = spawnQueue.Dequeue();
+            var position = _spawnQueue.Dequeue();
             int random = Random.Range(0, 10);
             // 30% chance of spawning a more explosion power up
             if (random < 3)
             {
-                Instantiate(moreExplosionPowerUpPrefab, position, Quaternion.identity);
+                Instantiate(_moreExplosionPowerUpPrefab, position, Quaternion.identity);
             }
             // 40% chance of spawning a +1 bomb power up
             else if (random < 7)
             {
-                Instantiate(bombPowerUpPrefab, position, Quaternion.identity);
+                Instantiate(_extraBombPowerUpPrefab, position, Quaternion.identity);
             }
             // 30% chance of spawning a +1 speed power up
             else
             {
-                Instantiate(fasterPowerUpPrefab, position, Quaternion.identity);
+                Instantiate(_fasterPowerUpPrefab, position, Quaternion.identity);
             }
         }
     }
 
     public void AddToQueue(Vector3 position)
     {
-        spawnQueue.Enqueue(position);
+        _spawnQueue.Enqueue(position);
     }
 }
