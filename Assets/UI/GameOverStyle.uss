@@ -1,0 +1,22 @@
+.title {
+    font-size: 200%;
+    color: rgb(255, 255, 255);
+}
+
+.container {
+    width: 50%;
+    height: 50%;
+    background-color: rgba(63, 64, 89, 0.98);
+    margin-top: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    align-items: center;
+    justify-content: space-around;
+    display: none;
+}
+
+.button {
+    background-color: rgb(17, 38, 77);
+    color: rgb(255, 255, 255);
+}

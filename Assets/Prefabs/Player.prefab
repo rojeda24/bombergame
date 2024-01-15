@@ -100,7 +100,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bombPrefab: {fileID: -8690302203897050199, guid: c1841a25e3286b944b17fd745b673e0f, type: 3}
-  WallsTilemap: {fileID: 0}
 --- !u!50 &6525911388206625646
 Rigidbody2D:
   serializedVersion: 4

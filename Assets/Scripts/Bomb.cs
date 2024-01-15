@@ -117,10 +117,6 @@ public class Bomb : MonoBehaviour
             {
                 collider.GetComponent<Block>().Explode();
                 return false;
-            } 
-            else if (collider.CompareTag("Player"))
-            {
-                collider.GetComponent<Player>().Die();
             }
         }
 

@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// Singleton class that manages the game.
@@ -10,15 +12,16 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject _playerPrefab; // Reference to the player prefab
     [SerializeField] private Vector3[] _locationList;
+    [SerializeField] private UIDocument _uiGameOver;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        SpawnPlayers();
-    }
 
     private void Awake()
     {
+        //Intialize the game
+        SpawnPlayers();//TODO: We dont want to spawn players on UI scenes
+        VisualElement root = _uiGameOver.rootVisualElement; //TODO: This is tightly coupled with a gameplay scene. 
+        root.Q<Button>("RestartButton").RegisterCallback<ClickEvent>(ev => OnRestartGame()); //TODO: This is tightly coupled with a gameplay scene. 
+
         if (Instance == null)
         {
             Instance = this;
@@ -56,6 +59,18 @@ public class GameManager : MonoBehaviour
 
     private void OnDieEvent(Player player)
     {
-        Debug.Log($"Player {player.Id} died");
+        //Choose winner
+        int winnerId = player.Id == 1 ? 2 : 1;
+
+        //Show game over screen
+        VisualElement root = _uiGameOver.rootVisualElement;
+        root.Q<VisualElement>("MainContainer").style.display = DisplayStyle.Flex;
+        root.Q<Label>("Label").text = $"Player {winnerId} wins!";
+    }
+
+    private void OnRestartGame()
+    {
+        Scene currentScene = SceneManager.GetActiveScene(); // Get the current scene
+        SceneManager.LoadScene(currentScene.buildIndex); // Load it again
     }
 }

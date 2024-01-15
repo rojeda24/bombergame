@@ -38,6 +38,20 @@ public class Player : MonoBehaviour
         _stepTarget = _rigidBody.position;
     }
 
+    private void Start()
+    {
+        InputReader.MoveEvent += OnMovementPerformed;
+        InputReader.MoveCancelledEvent += OnMovementCancelled;
+        InputReader.BombEvent += OnBombPerformed;
+    }
+
+    private void OnDisable()
+    {
+        InputReader.MoveEvent -= OnMovementPerformed;
+        InputReader.MoveCancelledEvent -= OnMovementCancelled;
+        InputReader.BombEvent -= OnBombPerformed;
+    }
+
     public void Die()
     {
         DeadEvent?.Invoke(this);
@@ -181,13 +195,6 @@ public class Player : MonoBehaviour
         float stepX = Mathf.Abs(direction.x) > 0 ? Mathf.Sign(direction.x) * _stepSize : 0;
         float stepY = Mathf.Abs(direction.y) > 0 ? Mathf.Sign(direction.y) * _stepSize : 0;
         return new Vector2(stepX, stepY);
-    }
-
-    private void Start()
-    {
-        InputReader.MoveEvent += OnMovementPerformed;
-        InputReader.MoveCancelledEvent += OnMovementCancelled;
-        InputReader.BombEvent += OnBombPerformed;
     }
 
     /// <summary>

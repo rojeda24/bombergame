@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/GameOverStyle.uss?fileID=7433441132597879392&amp;guid=fbee7f5592f5591438a0d1d70a065c5e&amp;type=3#GameOverStyle" />
+    <ui:VisualElement name="MainContainer" class="container">
+        <ui:Label tabindex="-1" text="Player 1 wins!" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="title" />
+        <ui:Button text="Play Again" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RestartButton" class="button" />
+    </ui:VisualElement>
+</ui:UXML>
