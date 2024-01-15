@@ -17,6 +17,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        //Intialize the game
+        SpawnPlayers();//TODO: We dont want to spawn players on UI scenes
+        VisualElement root = _uiGameOver.rootVisualElement; //TODO: This is tightly coupled with a gameplay scene. 
+        root.Q<Button>("RestartButton").RegisterCallback<ClickEvent>(ev => OnRestartGame()); //TODO: This is tightly coupled with a gameplay scene. 
+
         if (Instance == null)
         {
             Instance = this;
@@ -25,17 +30,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            SpawnPlayers();//TODO: We dont want to spawn players on UI scenes
-            VisualElement root = _uiGameOver.rootVisualElement;
-            root.Q<Button>("RestartButton").RegisterCallback<ClickEvent>(ev => OnRestartGame());
         }
-    }
-
-    private void OnEnable()
-    {
-        SpawnPlayers();
-        VisualElement root = _uiGameOver.rootVisualElement;
-        root.Q<Button>("RestartButton").RegisterCallback<ClickEvent>(ev => OnRestartGame());
     }
 
     private void SpawnPlayers()
